@@ -13,6 +13,8 @@
   # Node.js version for functions (minimum 18 for Fetch API)
   NODE_VERSION = "18"
   NPM_VERSION = "9"
+  # Python version for zwift_api_client integration
+  PYTHON_VERSION = "3.11"
 
 # API endpoints routing to functions (MUST come before SPA routing)
 [[redirects]]
