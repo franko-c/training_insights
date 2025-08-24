@@ -1,0 +1,6 @@
+/api/* /.netlify/functions/:splat 200
+/* /index.html 200
+
+# Force correct MIME types
+/assets/*.js /assets/:splat 200!
+Content-Type: text/javascript

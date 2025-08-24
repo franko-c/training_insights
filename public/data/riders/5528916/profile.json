@@ -1,0 +1,23 @@
+{
+  "rider_id": "5528916",
+  "extraction_date": "2025-08-22T21:25:53.190436",
+  "name": "Fran Cardona",
+  "athlete_id": "112719381",
+  "zwift_id": "5528916",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/95bbb352-2678661",
+  "team": "GTR",
+  "team_id": "19667",
+  "category": "B",
+  "weight": 76.6,
+  "ftp": 297,
+  "wkg": 3.88,
+  "zwift_racing_score": 635.0,
+  "strava_url": "https://www.strava.com/athletes/112719381",
+  "power_summary": {
+    "15s": 904,
+    "1min": 539,
+    "5min": 391,
+    "20min": 333
+  }
+}

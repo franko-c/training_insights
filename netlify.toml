@@ -1,0 +1,67 @@
+# Netlify configuration for Zwift Racing Insights
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Build command for the React app
+  command = "npm run build"
+  # Directory to publish (Vite builds to 'dist')
+  publish = "dist"
+  # Functions directory
+  functions = "netlify/functions"
+
+[build.environment]
+  # Node.js version for functions (minimum 18 for Fetch API)
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+# SPA (Single Page Application) routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# API endpoints routing to functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Headers for security and CORS
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+
+# Headers for API endpoints
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+
+# Headers for data files
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=3600"
+
+# Headers for static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# JavaScript MIME type fix
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/assets/*.js"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
