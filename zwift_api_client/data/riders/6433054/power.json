@@ -1,0 +1,802 @@
+{
+  "time_1": {
+    "peak_last_event": 469,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 1017,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 1017,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_2": {
+    "peak_last_event": 447,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 1002,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 1002,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_3": {
+    "peak_last_event": 436,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 995,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 995,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_4": {
+    "peak_last_event": 435,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 988,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 988,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_5": {
+    "peak_last_event": 433,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 979,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 979,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_6": {
+    "peak_last_event": 430,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 960,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 960,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_7": {
+    "peak_last_event": 429,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 949,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 949,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_8": {
+    "peak_last_event": 427,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 939,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 939,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_9": {
+    "peak_last_event": 424,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 924,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 924,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_10": {
+    "peak_last_event": 424,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 915,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 915,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_11": {
+    "peak_last_event": 422,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 904,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 904,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_12": {
+    "peak_last_event": 420,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 894,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 894,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_13": {
+    "peak_last_event": 419,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 889,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 889,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_14": {
+    "peak_last_event": 417,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 882,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 882,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_15": {
+    "peak_last_event": 415,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 876,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 876,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_16": {
+    "peak_last_event": 415,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 869,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 869,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_17": {
+    "peak_last_event": 415,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 863,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 863,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_18": {
+    "peak_last_event": 414,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 857,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 857,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_19": {
+    "peak_last_event": 413,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 848,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 848,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_20": {
+    "peak_last_event": 412,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 842,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 842,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_21": {
+    "peak_last_event": 410,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 836,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 836,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_22": {
+    "peak_last_event": 408,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 830,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 830,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_23": {
+    "peak_last_event": 406,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 812,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 812,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_24": {
+    "peak_last_event": 405,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 796,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 796,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_25": {
+    "peak_last_event": 403,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 774,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 774,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_26": {
+    "peak_last_event": 403,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 754,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 754,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_27": {
+    "peak_last_event": 402,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 750,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 750,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_28": {
+    "peak_last_event": 402,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 748,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 748,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_29": {
+    "peak_last_event": 400,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 744,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 744,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_30": {
+    "peak_last_event": 400,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 738,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 738,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_35": {
+    "peak_last_event": 398,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 685,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 685,
+    "date_season": "2025-06-29T08:15:00"
+  },
+  "time_40": {
+    "peak_last_event": 396,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 630,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 652,
+    "date_season": "2025-07-13T08:15:00"
+  },
+  "time_45": {
+    "peak_last_event": 394,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 581,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 622,
+    "date_season": "2025-07-13T08:15:00"
+  },
+  "time_50": {
+    "peak_last_event": 392,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 546,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 598,
+    "date_season": "2025-06-29T08:15:00"
+  },
+  "time_55": {
+    "peak_last_event": 392,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 518,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 560,
+    "date_season": "2025-06-29T08:15:00"
+  },
+  "time_60": {
+    "peak_last_event": 390,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 513,
+    "date_recent": "2025-08-03T08:15:00",
+    "peak_season": 529,
+    "date_season": "2025-07-13T08:15:00"
+  },
+  "time_70": {
+    "peak_last_event": 387,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 513,
+    "date_recent": "2025-08-03T08:15:00",
+    "peak_season": 508,
+    "date_season": "2025-06-22T08:15:00"
+  },
+  "time_80": {
+    "peak_last_event": 383,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 502,
+    "date_recent": "2025-08-03T08:15:00",
+    "peak_season": 501,
+    "date_season": "2025-06-22T08:15:00"
+  },
+  "time_90": {
+    "peak_last_event": 381,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 473,
+    "date_recent": "2025-08-03T08:15:00",
+    "peak_season": 484,
+    "date_season": "2025-06-22T08:15:00"
+  },
+  "time_100": {
+    "peak_last_event": 376,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 458,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 463,
+    "date_season": "2025-06-22T08:15:00"
+  },
+  "time_110": {
+    "peak_last_event": 371,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 455,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 455,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_120": {
+    "peak_last_event": 366,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 454,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 454,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_150": {
+    "peak_last_event": 357,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 454,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 454,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_180": {
+    "peak_last_event": 349,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 427,
+    "date_recent": "2025-08-24T08:15:00",
+    "peak_season": 427,
+    "date_season": "2025-08-24T08:15:00"
+  },
+  "time_210": {
+    "peak_last_event": 342,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 408,
+    "date_recent": "2025-08-17T08:15:00",
+    "peak_season": 423,
+    "date_season": "2025-07-20T08:15:00"
+  },
+  "time_240": {
+    "peak_last_event": 336,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 409,
+    "date_recent": "2025-08-17T08:15:00",
+    "peak_season": 418,
+    "date_season": "2025-07-20T08:15:00"
+  },
+  "time_270": {
+    "peak_last_event": 330,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 402,
+    "date_recent": "2025-08-10T08:15:00",
+    "peak_season": 402,
+    "date_season": "2025-08-10T08:15:00"
+  },
+  "time_300": {
+    "peak_last_event": 316,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 399,
+    "date_recent": "2025-08-10T08:15:00",
+    "peak_season": 399,
+    "date_season": "2025-08-10T08:15:00"
+  },
+  "time_330": {
+    "peak_last_event": 306,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 386,
+    "date_recent": "2025-08-10T08:15:00",
+    "peak_season": 389,
+    "date_season": "2025-07-06T08:15:00"
+  },
+  "time_360": {
+    "peak_last_event": 298,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 374,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 390,
+    "date_season": "2025-07-06T08:15:00"
+  },
+  "time_390": {
+    "peak_last_event": 293,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 370,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 393,
+    "date_season": "2025-07-06T08:15:00"
+  },
+  "time_420": {
+    "peak_last_event": 289,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 367,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 380,
+    "date_season": "2025-07-06T08:15:00"
+  },
+  "time_450": {
+    "peak_last_event": 285,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 366,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 369,
+    "date_season": "2025-07-06T08:15:00"
+  },
+  "time_480": {
+    "peak_last_event": 282,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 365,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 365,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_510": {
+    "peak_last_event": 279,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 365,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 365,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_540": {
+    "peak_last_event": 276,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 363,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 363,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_570": {
+    "peak_last_event": 274,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 361,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 361,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_600": {
+    "peak_last_event": 272,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 359,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 359,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_660": {
+    "peak_last_event": 267,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 357,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 357,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_720": {
+    "peak_last_event": 264,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 356,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 356,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_780": {
+    "peak_last_event": 262,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 354,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 354,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_840": {
+    "peak_last_event": 260,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 355,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 355,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_900": {
+    "peak_last_event": 259,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 356,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 356,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_960": {
+    "peak_last_event": 257,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 345,
+    "date_recent": "2025-08-05T18:30:00",
+    "peak_season": 345,
+    "date_season": "2025-08-05T18:30:00"
+  },
+  "time_1020": {
+    "peak_last_event": 254,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 334,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 337,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_1080": {
+    "peak_last_event": 253,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 334,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 336,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_1140": {
+    "peak_last_event": 251,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 335,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 335,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_1200": {
+    "peak_last_event": 249,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 336,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 335,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_1320": {
+    "peak_last_event": 247,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 327,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 335,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_1440": {
+    "peak_last_event": 239,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 326,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 334,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_1560": {
+    "peak_last_event": 225,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 324,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 332,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_1680": {
+    "peak_last_event": 216,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 319,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 331,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_1800": {
+    "peak_last_event": 212,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 316,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 329,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_1920": {
+    "peak_last_event": 212,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 316,
+    "date_recent": "2025-07-29T18:30:00",
+    "peak_season": 325,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_2040": {
+    "peak_last_event": 213,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 314,
+    "date_recent": "2025-07-31T18:45:00",
+    "peak_season": 321,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_2160": {
+    "peak_last_event": 213,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 315,
+    "date_recent": "2025-07-31T18:45:00",
+    "peak_season": 320,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_2280": {
+    "peak_last_event": 210,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 316,
+    "date_recent": "2025-07-31T18:45:00",
+    "peak_season": 318,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_2400": {
+    "peak_last_event": 208,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 316,
+    "date_recent": "2025-07-31T18:45:00",
+    "peak_season": 315,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_2520": {
+    "peak_last_event": 208,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 306,
+    "date_recent": "2025-08-14T18:45:00",
+    "peak_season": 313,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_2640": {
+    "peak_last_event": 207,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 307,
+    "date_recent": "2025-08-14T18:45:00",
+    "peak_season": 311,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_2760": {
+    "peak_last_event": 206,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 307,
+    "date_recent": "2025-08-07T18:45:00",
+    "peak_season": 310,
+    "date_season": "2025-06-17T19:00:00"
+  },
+  "time_2880": {
+    "peak_last_event": 205,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 249,
+    "date_recent": "2025-08-03T08:15:00",
+    "peak_season": 311,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_3000": {
+    "peak_last_event": 205,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 239,
+    "date_recent": "2025-08-03T08:15:00",
+    "peak_season": 311,
+    "date_season": "2025-06-10T19:00:00"
+  },
+  "time_3120": {
+    "peak_last_event": 206,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 236,
+    "date_recent": "2025-08-10T08:15:00",
+    "peak_season": 311,
+    "date_season": "2025-06-17T19:00:00"
+  },
+  "time_3240": {
+    "peak_last_event": 206,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 232,
+    "date_recent": "2025-08-10T08:15:00",
+    "peak_season": 311,
+    "date_season": "2025-06-17T19:00:00"
+  },
+  "time_3360": {
+    "peak_last_event": 207,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 230,
+    "date_recent": "2025-07-27T08:15:00",
+    "peak_season": 244,
+    "date_season": "2025-07-19T15:00:00"
+  },
+  "time_3480": {
+    "peak_last_event": 207,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 230,
+    "date_recent": "2025-07-27T08:15:00",
+    "peak_season": 244,
+    "date_season": "2025-07-19T15:00:00"
+  },
+  "time_3600": {
+    "peak_last_event": 207,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 230,
+    "date_recent": "2025-07-27T08:15:00",
+    "peak_season": 244,
+    "date_season": "2025-07-19T15:00:00"
+  },
+  "time_3900": {
+    "peak_last_event": 195,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 231,
+    "date_recent": "2025-07-27T08:15:00",
+    "peak_season": 243,
+    "date_season": "2025-07-19T15:00:00"
+  },
+  "time_4200": {
+    "peak_last_event": 194,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 226,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 243,
+    "date_season": "2025-07-19T15:00:00"
+  },
+  "time_4500": {
+    "peak_last_event": 194,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 225,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 243,
+    "date_season": "2025-07-19T15:00:00"
+  },
+  "time_4800": {
+    "peak_last_event": 194,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 224,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 242,
+    "date_season": "2025-07-19T15:00:00"
+  },
+  "time_5100": {
+    "peak_last_event": 195,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 224,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 241,
+    "date_season": "2025-07-19T15:00:00"
+  },
+  "time_5400": {
+    "peak_last_event": 192,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 224,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 238,
+    "date_season": "2025-06-28T10:05:00"
+  },
+  "time_5700": {
+    "peak_last_event": 191,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 224,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 238,
+    "date_season": "2025-06-28T10:05:00"
+  },
+  "time_6000": {
+    "peak_last_event": 191,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 224,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 238,
+    "date_season": "2025-06-28T10:05:00"
+  },
+  "time_6300": {
+    "peak_last_event": 192,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 223,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 238,
+    "date_season": "2025-06-28T10:05:00"
+  },
+  "time_6600": {
+    "peak_last_event": 194,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 223,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 238,
+    "date_season": "2025-06-28T10:05:00"
+  },
+  "time_6900": {
+    "peak_last_event": 195,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 222,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 238,
+    "date_season": "2025-06-28T10:05:00"
+  },
+  "time_7200": {
+    "peak_last_event": 192,
+    "date_last_event": "2025-08-24T09:25:00",
+    "peak_recent": 222,
+    "date_recent": "2025-08-09T15:00:00",
+    "peak_season": 228,
+    "date_season": "2025-06-07T15:00:00"
+  }
+}

@@ -1,0 +1,52 @@
+​
+Warning: some redirects have syntax errors:
+​
+Could not parse redirect line 6:
+  Content-Type: text/javascript
+The destination path/URL must start with "/", "http:" or "https:"
+⬥ Injecting environment variable values for all scopes
+⬥ Ignored general context env var: LANG (defined in process)
+⬥ Injected netlify.toml file env vars: NODE_VERSION, NPM_VERSION
+⬥ Setting up local dev server
+
+⬥ Starting Vite dev server
+⠋ Waiting for Vite dev server to be ready on port 5173
+[1G
+> zwift-racing-insights-ui@0.2.0 dev
+> vite
+
+⠙ Waiting for Vite dev server to be ready on port 5173
+[1G
+  VITE v4.5.14  ready in 204 ms
+
+⠹ Waiting for Vite dev server to be ready on port 5173
+[1G  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+⠸ Waiting for Vite dev server to be ready on port 5173
+✔ Vite dev server ready on port 5173
+⬥ Redirects syntax errors:
+Could not parse redirect line 6:
+  Content-Type: text/javascript
+The destination path/URL must start with "/", "http:" or "https:"
+
+   ╭─────────────────────── ⬥  ────────────────────────╮
+   │                                                   │
+   │   Local dev server ready: http://localhost:8888   │
+   │                                                   │
+   ╰───────────────────────────────────────────────────╯
+
+⬥ Loaded function health
+⬥ Loaded function riders
+⬥ Loaded function fetch-rider
+(node:59418) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ›   Error: Netlify CLI has terminated unexpectedly
+This is a problem with the Netlify CLI, not with your application.
+If you recently updated the CLI, consider reverting to an older version by running:
+
+npm install -g netlify-cli@VERSION
+
+You can use any version from https://ntl.fyi/cli-versions.
+
+Please report this problem at https://ntl.fyi/cli-error including the error details below.
+
