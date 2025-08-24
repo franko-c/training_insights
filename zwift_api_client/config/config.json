@@ -1,0 +1,54 @@
+{
+  "api": {
+    "base_url": "https://zwiftpower.com",
+    "timeout": 30,
+    "max_retries": 3,
+    "retry_delay": 1.0,
+    "rate_limit_delay": 1.0
+  },
+  "cache": {
+    "enabled": true,
+    "directory": "/Users/franoc/TOP/shared/zwift_tools/zwift_api_client/config/cache",
+    "default_ttl": 3600,
+    "max_size_mb": 100,
+    "cleanup_interval": 3600
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file": "/Users/franoc/TOP/shared/zwift_tools/zwift_api_client/config/api_client.log",
+    "max_size_mb": 10,
+    "backup_count": 5
+  },
+  "auth": {
+    "session_timeout": 3600,
+    "auto_refresh": true,
+    "remember_session": true
+  },
+  "data": {
+    "standard_intervals": [
+      5,
+      15,
+      30,
+      60,
+      120,
+      300,
+      600,
+      1200,
+      1800,
+      3600
+    ],
+    "categories": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "default_cache_ttl": {
+      "profile": 86400,
+      "power": 3600,
+      "rankings": 7200,
+      "races": 86400
+    }
+  }
+}

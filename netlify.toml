@@ -14,16 +14,16 @@
   NODE_VERSION = "18"
   NPM_VERSION = "9"
 
+# API endpoints routing to functions (MUST come before SPA routing)
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
 # SPA (Single Page Application) routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200
-
-# API endpoints routing to functions
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
   status = 200
 
 # Headers for security and CORS

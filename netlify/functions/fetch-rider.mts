@@ -64,32 +64,78 @@ export default async (req: Request, context: Context) => {
       }
     }
 
-    // Note: In a real deployment, you'd need to:
-    // 1. Set up the Python environment
-    // 2. Install the zwift_api_client dependencies
-    // 3. Handle authentication properly
-    // 4. Run the actual data collection
+    // Execute the Python data collection script with virtual environment
+    const pythonExe = `${process.cwd()}/.venv/bin/python`;
+    const command = `cd "${process.cwd()}" && PYTHONPATH=. ${pythonExe} zwift_api_client/utils/data_manager_cli.py --refresh-rider ${riderId}`;
     
-    // For now, return an instructional message
-    return new Response(JSON.stringify({
-      success: false,
-      error: "PYTHON_BACKEND_REQUIRED",
-      message: `To fetch data for rider ${riderId}, you need to set up the Python backend. ` +
-               `This requires installing Python dependencies and configuring Zwift authentication. ` +
-               `Please run locally: python data_manager_cli.py --refresh-rider ${riderId}`,
-      instructions: [
-        "1. Install Python dependencies (requests, etc.)",
-        "2. Configure Zwift authentication",
-        "3. Set up the data collection pipeline",
-        "4. Deploy with proper environment variables"
-      ]
-    }), {
-      status: 501,
-      headers: { 
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+    try {
+      console.log(`Executing: ${command}`);
+      const { stdout, stderr } = await execAsync(command);
+      
+      if (stderr && !stderr.includes('UserWarning')) {
+        console.error(`Python script stderr: ${stderr}`);
+        if (stderr.includes('Error') || stderr.includes('Exception')) {
+          throw new Error(`Python script failed: ${stderr}`);
+        }
       }
-    });
+      
+      console.log(`Python script output: ${stdout}`);
+      
+      // Copy data from zwift_api_client to public directory
+      const sourceDataPath = path.join(process.cwd(), "zwift_api_client", "data", "riders", riderId.toString());
+      const targetDataPath = path.join(process.cwd(), "public", "data", "riders", riderId.toString());
+      
+      try {
+        await fs.mkdir(targetDataPath, { recursive: true });
+        const files = await fs.readdir(sourceDataPath);
+        const jsonFiles = files.filter(file => file.endsWith('.json'));
+        
+        for (const file of jsonFiles) {
+          const sourcePath = path.join(sourceDataPath, file);
+          const targetPath = path.join(targetDataPath, file);
+          await fs.copyFile(sourcePath, targetPath);
+          console.log(`Copied ${file} to public data directory`);
+        }
+        
+        console.log(`Successfully copied ${jsonFiles.length} data files for rider ${riderId}`);
+      } catch (copyError) {
+        console.error(`Data copy error:`, copyError);
+      }
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: `Successfully fetched data for rider ${riderId}`,
+        riderId: riderId.toString(),
+        output: stdout
+      }), {
+        status: 200,
+        headers: { 
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        }
+      });
+      
+    } catch (execError) {
+      console.error(`Python execution error:`, execError);
+      
+      return new Response(JSON.stringify({
+        success: false,
+        error: "PYTHON_EXECUTION_FAILED",
+        message: `Failed to fetch data for rider ${riderId}. Error: ${execError.message}`,
+        instructions: [
+          "1. Verify Python environment is set up correctly",
+          "2. Check Zwift API credentials", 
+          "3. Ensure zwift_api_client dependencies are installed",
+          `4. Try running manually: python3 zwift_api_client/utils/data_manager_cli.py --refresh-rider ${riderId}`
+        ]
+      }), {
+        status: 500,
+        headers: { 
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        }
+      });
+    }
 
   } catch (error) {
     console.error("Error in fetch-rider function:", error);
