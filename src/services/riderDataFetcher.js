@@ -54,10 +54,7 @@ export class RiderDataFetcher {
       if (error.message === 'API_NOT_AVAILABLE' || error.name === 'TypeError') {
         // Provide manual instructions since backend API isn't set up
         throw new Error(
-          `Backend API not available. To fetch data for rider ${riderId}, please run:\n\n` +
-          `cd /Users/franoc/TOP/shared/zwift_tools\n` +
-          `python zwift_api_client/utils/data_manager_cli.py --refresh-rider ${riderId}\n\n` +
-          `Then refresh this page and try again.`
+          `API endpoint not available. The fetch-rider function should handle new rider requests automatically.`
         )
       }
       throw error
@@ -69,7 +66,8 @@ export class RiderDataFetcher {
    */
   async refreshRiderData(riderId) {
     try {
-      const response = await fetch(`${this.baseApiPath}/refresh-rider`, {
+      // Use the same fetch-rider endpoint but with force_refresh: true
+      const response = await fetch(`${this.baseApiPath}/fetch-rider`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,10 +91,7 @@ export class RiderDataFetcher {
     } catch (error) {
       if (error.message === 'REFRESH_API_NOT_AVAILABLE' || error.name === 'TypeError') {
         throw new Error(
-          `To refresh data for rider ${riderId}, please run:\n\n` +
-          `cd /Users/franoc/TOP/shared/zwift_tools\n` +
-          `python zwift_api_client/utils/data_manager_cli.py --refresh-rider ${riderId}\n\n` +
-          `Then use the 'Reload Data' button in the dashboard.`
+          `API endpoint not available. The fetch-rider function should handle refresh requests.`
         )
       }
       throw error
