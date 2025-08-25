@@ -5,6 +5,8 @@ import os
 import sys
 import logging
 from typing import Optional
+import json
+from pathlib import Path
 
 # Add the current directory to Python path so imports work
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -59,12 +61,33 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False):
             result = cli.refresh_rider(rider_id, force=False)
         
         logger.info(f"Successfully processed rider {rider_id}")
+
+        # Attempt to load produced JSON files (profile is critical for frontend)
+        data_dir = Path(__file__).parent / "data" / "riders" / str(rider_id)
+        files = []
+        profile = None
+        try:
+            if data_dir.exists():
+                for p in data_dir.iterdir():
+                    if p.suffix == ".json":
+                        files.append(p.name)
+                        if p.name == "profile.json":
+                            try:
+                                with open(p, "r", encoding="utf-8") as fh:
+                                    profile = json.load(fh)
+                            except Exception:
+                                profile = None
+        except Exception as e:
+            logger.warning(f"Error reading generated files for {rider_id}: {e}")
+
         return {
             "success": True,
             "rider_id": rider_id,
             "force_refresh": force_refresh,
             "result": str(result),
-            "message": f"Rider {rider_id} data {'refreshed' if force_refresh else 'fetched'} successfully"
+            "message": f"Rider {rider_id} data {'refreshed' if force_refresh else 'fetched'} successfully",
+            "files": files,
+            "profile": profile,
         }
         
     except Exception as e:
