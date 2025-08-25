@@ -127,7 +127,7 @@ python3 data_manager_cli.py --help
 👥 Total riders: 1
 📁 Total files: 10
 💾 Total size: 131.2 KB
-📂 Data directory: /Users/franoc/TOP/shared/zwift_tools/zwift_api_client/data/riders
+📂 Data directory: /Users/franoc/TOP/training_insights/zwift_api_client/data/riders
 ```
 
 ### Reset Command Output
