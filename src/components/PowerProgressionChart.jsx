@@ -64,6 +64,7 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
       
       console.log('🔍 RAW EVENTS INSPECTION:', {
         totalEvents: eventsToUse.length,
+        selectedEventType,
         sampleEvent1: eventsToUse[0] ? {
           event_date: eventsToUse[0].event_date,
           dateType: typeof eventsToUse[0].event_date,
