@@ -448,6 +448,7 @@ const Dashboard = ({ riderData, onRiderChange }) => {
                   </TooltipSimple>
                 </h2>
                 <PowerCurveChart 
+                  key={`power-curve-${selectedEventType}`}
                   data={riderData} 
                   selectedEventType={selectedEventType}
                   eventData={eventData}
@@ -458,6 +459,7 @@ const Dashboard = ({ riderData, onRiderChange }) => {
               {/* Power Progression Chart - New Feature */}
               <div className="mb-8">
                 <PowerProgressionChart
+                  key={`power-progression-${selectedEventType}`}
                   selectedEventType={selectedEventType}
                   eventData={eventData}
                   powerData={powerData}

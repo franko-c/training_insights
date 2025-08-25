@@ -11,9 +11,17 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    console.log('🔄 PowerProgressionChart useEffect triggered:', {
+      selectedEventType,
+      eventDataCount: eventData?.events?.length,
+      hasEventData: !!eventData,
+      eventKeys: eventData ? Object.keys(eventData) : 'none'
+    })
+    
     if (eventData?.events?.length >= 3) {
       calculateProgression()
     } else {
+      console.log('📊 Clearing progression data - insufficient events or no data')
       setProgressionData(null)
     }
   }, [eventData, powerData, dayFilter, selectedEventType])
@@ -308,6 +316,20 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
     if (power >= 250) return 'text-blue-600'
     if (power >= 200) return 'text-indigo-600'
     return 'text-gray-600'
+  }
+
+  // Defensive check: Don't render if eventData is null or undefined
+  if (!eventData || eventData === null) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="text-center text-gray-500">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            📈 Event Timeline & Performance Analysis
+          </h3>
+          <p className="text-sm">Loading event data...</p>
+        </div>
+      </div>
+    )
   }
 
   if (!progressionData || progressionData.events.length === 0) {
