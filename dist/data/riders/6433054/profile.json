@@ -1,0 +1,23 @@
+{
+  "rider_id": "6433054",
+  "extraction_date": "2025-08-25T00:42:42.268903",
+  "name": "Ben Nicol",
+  "athlete_id": "0",
+  "zwift_id": "6433054",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/f50c018f-3004573",
+  "team": "ZZRC TTT Racing",
+  "team_id": "18521",
+  "category": "A+",
+  "weight": 66.1,
+  "ftp": 311,
+  "wkg": 4.7,
+  "zwift_racing_score": 755.0,
+  "strava_url": "https://www.strava.com/athletes/0",
+  "power_summary": {
+    "15s": 876,
+    "1min": 529,
+    "5min": 399,
+    "20min": 336
+  }
+}
