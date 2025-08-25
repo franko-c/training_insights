@@ -66,8 +66,17 @@ export default async (req: Request, context: Context) => {
 
     // Execute the Python data collection script 
     // Try different Python paths for Netlify Functions environment
-    const pythonPaths = ["/usr/bin/python3", "/opt/buildhome/python3.11/bin/python3", "python3"];
-    let pythonExe = "python3"; // fallback
+    const pythonPaths = [
+      "/opt/buildhome/python3.11/bin/python",
+      "/opt/buildhome/python3.11/bin/python3", 
+      "/opt/buildhome/python3/bin/python",
+      "/opt/buildhome/python3/bin/python3",
+      "/usr/bin/python3", 
+      "/usr/bin/python",
+      "python3",
+      "python"
+    ];
+    let pythonExe: string | null = null;
     
     // Test which Python executable is available
     for (const pythonPath of pythonPaths) {
@@ -79,6 +88,25 @@ export default async (req: Request, context: Context) => {
       } catch (e) {
         console.log(`Python not found at: ${pythonPath}`);
       }
+    }
+    
+    if (!pythonExe) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "PYTHON_NOT_FOUND",
+        message: "No Python executable found in the environment",
+        instructions: [
+          "1. Python runtime not available in Netlify Functions",
+          "2. Check Netlify build configuration", 
+          "3. Ensure Python runtime is properly configured"
+        ]
+      }), {
+        status: 500,
+        headers: { 
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        }
+      });
     }    // First install dependencies if needed
     const installCommand = `cd "${process.cwd()}" && ${pythonExe} -m pip install -q requests beautifulsoup4 lxml python-dotenv`;
     console.log(`Installing dependencies: ${installCommand}`);
