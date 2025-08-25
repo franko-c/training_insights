@@ -1,6 +1,6 @@
 {
   "rider_id": "5528916",
-  "extraction_date": "2025-08-23T14:48:33.390949",
+  "extraction_date": "2025-08-25T01:51:37.450347",
   "data_sources": [
     "profile_html",
     "power_api",
@@ -10,7 +10,7 @@
   "error": null,
   "profile": {
     "rider_id": "5528916",
-    "extraction_date": "2025-08-23T14:48:34.588122",
+    "extraction_date": "2025-08-25T01:51:39.778474",
     "name": "Fran Cardona",
     "athlete_id": "112719381",
     "zwift_id": "5528916",
@@ -715,8 +715,8 @@
       "date_season": "2025-07-02T08:45:00"
     },
     "time_4500": {
-      "peak_season": 212,
-      "date_season": "2025-05-25T16:55:00"
+      "peak_season": 200,
+      "date_season": "2025-07-02T08:45:00"
     },
     "time_4800": {
       "peak_season": 187,
@@ -744,7 +744,7 @@
     }
   },
   "events": {
-    "extraction_date": "2025-08-23T14:48:44.259609",
+    "extraction_date": "2025-08-25T01:51:48.739740",
     "total_events": 271,
     "races": {
       "count": 148,
@@ -4832,8 +4832,8 @@
     "source": "profile_results_api_separated"
   },
   "metadata": {
-    "last_updated": "2025-08-23T14:48:44.264480",
-    "fetch_duration": 10.873513,
+    "last_updated": "2025-08-25T01:51:48.745690",
+    "fetch_duration": 11.295323,
     "data_sources": [
       "profile_html",
       "power_api",
