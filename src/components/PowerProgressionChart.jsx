@@ -15,22 +15,26 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
       selectedEventType,
       eventDataCount: eventData?.events?.length,
       hasEventData: !!eventData,
-      eventKeys: eventData ? Object.keys(eventData) : 'none'
+      eventKeys: eventData ? Object.keys(eventData) : 'none',
+      dayFilter
     })
+    
+    // Always clear progression data first to prevent stale data
+    setProgressionData(null)
     
     // Clear progression data immediately when event type changes or when there's insufficient data
     if (!eventData || !eventData.events || eventData.events.length < 3) {
       console.log('📊 Clearing progression data - insufficient events or no data')
-      setProgressionData(null)
       return
     }
     
     // Only calculate if we have sufficient data
+    console.log('📊 Starting progression calculation with', eventData.events.length, 'events')
     calculateProgression()
   }, [eventData, powerData, dayFilter, selectedEventType])
 
   const calculateProgression = () => {
-    console.log('��📈 PowerProgressionChart DETAILED ANALYSIS START:', {
+    console.log('📈 PowerProgressionChart DETAILED ANALYSIS START:', {
       selectedEventType,
       dayFilter,
       totalRawEvents: eventData?.events?.length,
@@ -39,6 +43,21 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
     setLoading(true)
 
     try {
+      // Validate eventData before processing
+      if (!eventData || !eventData.events || !Array.isArray(eventData.events)) {
+        console.error('❌ Invalid eventData structure:', eventData)
+        setProgressionData(null)
+        setLoading(false)
+        return
+      }
+
+      if (eventData.events.length < 3) {
+        console.log('📊 Insufficient events for progression:', eventData.events.length)
+        setProgressionData(null)
+        setLoading(false)
+        return
+      }
+
       // TIMELINE EXPANSION: If we have < 10 events and dayFilter > 0, we should expand timeline
       let eventsToUse = [...eventData.events]
       let timelineExpanded = false
