@@ -908,7 +908,9 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
                               
                               if (currentPower && prevPower && currentPower !== prevPower) {
                                 const change = currentPower - prevPower;
-                                if (Math.abs(change) >= 5) { // Show changes >= 5W
+                                // ENHANCED: More granular detection for frequent riders like Ben Nicol
+                                // Lowered threshold from 5W to 2W for better visual granularity
+                                if (Math.abs(change) >= 2) { // Show changes >= 2W
                                   const label = key === 'time_60' ? '1min' : key === 'time_300' ? '5min' : '20min';
                                   changes.push({ 
                                     key, 
@@ -925,7 +927,8 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
                         // Fallback to avgPower comparison if no power interval changes
                         if (changes.length === 0 && event.avgPower && prev.avgPower) {
                           const avgChange = event.avgPower - prev.avgPower;
-                          if (Math.abs(avgChange) >= 8) {
+                          // ENHANCED: More sensitive to avgPower changes for visual granularity
+                          if (Math.abs(avgChange) >= 3) { // Lowered from 8W to 3W
                             changes.push({
                               key: 'avg_power',
                               label: 'Avg',
@@ -940,17 +943,57 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
                           changes: changes
                         })
                         
-                        if (changes.length > 0) {
-                          const mainChange = changes[0] // Take first significant change
+                        // ENHANCED: Add more notable event types beyond just power changes
+                        const notableEvents = [...changes]
+                        
+                        // Add duration-based notable events
+                        if (event.duration) {
+                          const durationMin = Math.round(event.duration / 60)
+                          if (durationMin >= 90) { // Long rides are notable
+                            notableEvents.push({
+                              key: 'duration',
+                              label: 'Long',
+                              type: 'duration',
+                              value: durationMin,
+                              icon: '⏱️'
+                            })
+                          }
+                        }
+                        
+                        // Add consistency notable events (frequent riding patterns)
+                        if (idx > 0) {
+                          const daysBetween = Math.abs(new Date(event.event_date) - new Date(prev.event_date)) / (1000 * 60 * 60 * 24)
+                          if (daysBetween <= 2) { // Back-to-back training
+                            notableEvents.push({
+                              key: 'consistency',
+                              label: 'B2B',
+                              type: 'frequency',
+                              value: Math.round(daysBetween),
+                              icon: '🔄'
+                            })
+                          }
+                        }
+                        
+                        if (notableEvents.length > 0) {
+                          const mainEvent = notableEvents[0] // Take first notable event
+                          const isPowerChange = mainEvent.change !== undefined
+                          
                           return (
                             <div className={`text-xs px-2 py-1 rounded text-center ${
-                              mainChange.change > 0 
-                                ? 'bg-green-100 text-green-700' 
-                                : 'bg-red-100 text-red-700'
+                              isPowerChange 
+                                ? (mainEvent.change > 0 
+                                  ? 'bg-green-100 text-green-700' 
+                                  : 'bg-red-100 text-red-700')
+                                : 'bg-blue-100 text-blue-700' // Non-power notable events
                             }`}>
-                              <div className="font-medium">vs Previous:</div>
+                              <div className="font-medium">
+                                {isPowerChange ? 'vs Previous:' : 'Notable:'}
+                              </div>
                               <div className="text-xs mt-0.5">
-                                {mainChange.label} {mainChange.change > 0 ? '↗️' : '↘️'} {Math.abs(mainChange.change)}W
+                                {isPowerChange 
+                                  ? `${mainEvent.label} ${mainEvent.change > 0 ? '↗️' : '↘️'} ${Math.abs(mainEvent.change)}W`
+                                  : `${mainEvent.icon} ${mainEvent.label}${mainEvent.value ? `: ${mainEvent.value}${mainEvent.type === 'duration' ? 'min' : mainEvent.type === 'frequency' ? 'd gap' : ''}` : ''}`
+                                }
                               </div>
                             </div>
                           )
