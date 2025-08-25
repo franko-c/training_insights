@@ -5,8 +5,9 @@
 
 export class RiderDataFetcher {
   constructor() {
-    // API endpoints for Netlify Functions
-    this.baseApiPath = '/api'
+  // API endpoints
+  this.netlifyApiPath = '/api'
+  this.railwayApiBase = 'https://zwiftervals-production.up.railway.app'
   }
 
   /**
@@ -27,8 +28,17 @@ export class RiderDataFetcher {
    */
   async fetchRiderData(riderId) {
     try {
-      // First attempt: try the API endpoint if it exists
-      const response = await fetch(`${this.baseApiPath}/fetch-rider`, {
+      // Try Railway API first
+      const response = await fetch(`${this.railwayApiBase}/fetch-rider/${riderId}`)
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success !== false) {
+          return result
+        }
+        throw new Error(result.error || 'Railway API call failed')
+      }
+      // Fallback to Netlify if Railway fails
+      const netlifyResponse = await fetch(`${this.netlifyApiPath}/fetch-rider`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,25 +48,15 @@ export class RiderDataFetcher {
           force_refresh: false
         })
       })
-
-      if (response.ok) {
-        const result = await response.json()
+      if (netlifyResponse.ok) {
+        const result = await netlifyResponse.json()
         if (result.success) {
           return result
         }
-        throw new Error(result.error || 'API call failed')
+        throw new Error(result.error || 'Netlify API call failed')
       }
-
-      // If API endpoint doesn't exist, throw instructional error
       throw new Error('API_NOT_AVAILABLE')
-
     } catch (error) {
-      if (error.message === 'API_NOT_AVAILABLE' || error.name === 'TypeError') {
-        // Provide manual instructions since backend API isn't set up
-        throw new Error(
-          `API endpoint not available. The fetch-rider function should handle new rider requests automatically.`
-        )
-      }
       throw error
     }
   }
@@ -66,8 +66,17 @@ export class RiderDataFetcher {
    */
   async refreshRiderData(riderId) {
     try {
-      // Use the same fetch-rider endpoint but with force_refresh: true
-      const response = await fetch(`${this.baseApiPath}/fetch-rider`, {
+      // Try Railway API first
+      const response = await fetch(`${this.railwayApiBase}/fetch-rider/${riderId}?force_refresh=true`)
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success !== false) {
+          return result
+        }
+        throw new Error(result.error || 'Railway refresh failed')
+      }
+      // Fallback to Netlify if Railway fails
+      const netlifyResponse = await fetch(`${this.netlifyApiPath}/fetch-rider`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,23 +86,15 @@ export class RiderDataFetcher {
           force_refresh: true 
         })
       })
-
-      if (response.ok) {
-        const result = await response.json()
+      if (netlifyResponse.ok) {
+        const result = await netlifyResponse.json()
         if (result.success) {
           return result
         }
-        throw new Error(result.error || 'Refresh failed')
+        throw new Error(result.error || 'Netlify refresh failed')
       }
-
       throw new Error('REFRESH_API_NOT_AVAILABLE')
-
     } catch (error) {
-      if (error.message === 'REFRESH_API_NOT_AVAILABLE' || error.name === 'TypeError') {
-        throw new Error(
-          `API endpoint not available. The fetch-rider function should handle refresh requests.`
-        )
-      }
       throw error
     }
   }
