@@ -64,8 +64,21 @@ export default async (req: Request, context: Context) => {
       }
     }
 
-    // Execute the Python data collection script with virtual environment
-    const pythonExe = `${process.cwd()}/.venv/bin/python`;
+    // Execute the Python data collection script 
+    // Use system Python 3.11 since virtual env isn't available in Netlify Functions
+    const pythonExe = "python3";
+    
+    // First install dependencies if needed
+    const installCommand = `cd "${process.cwd()}" && pip3 install -q requests beautifulsoup4 lxml python-dotenv`;
+    console.log(`Installing dependencies: ${installCommand}`);
+    
+    try {
+      await execAsync(installCommand);
+      console.log("Dependencies installed successfully");
+    } catch (installError) {
+      console.log("Dependencies might already be installed, continuing...");
+    }
+    
     const command = `cd "${process.cwd()}" && PYTHONPATH=. ${pythonExe} zwift_api_client/utils/data_manager_cli.py --refresh-rider ${riderId}`;
     
     try {
