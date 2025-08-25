@@ -12,3 +12,33 @@
 2025-08-25 19:25:15,002 - ZwiftApiAuth - INFO - Cached session is expired
 2025-08-25 19:25:15,002 - ZwiftApiAuth - INFO - Logging in to ZwiftPower...
 2025-08-25 19:25:21,803 - ZwiftApiAuth - INFO - OAuth login successful!
+2025-08-25 23:00:17,681 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-25 23:00:17,681 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-25 23:00:17,681 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-25 23:09:46,720 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-25 23:09:46,720 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-25 23:09:46,720 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-25 23:12:27,139 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-25 23:12:27,139 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-25 23:12:27,139 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-25 23:49:55,311 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-25 23:49:55,312 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-25 23:49:55,312 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-26 00:23:24,019 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-26 00:23:24,019 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-26 00:23:24,019 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-26 00:29:03,168 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-26 00:29:03,168 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-26 00:29:03,168 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-26 00:30:14,253 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-26 00:30:14,254 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-26 00:30:14,254 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-26 00:30:15,346 - ZwiftApiAuth - INFO - Loaded cached session successfully
+2025-08-26 00:35:36,758 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-26 00:35:36,758 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-26 00:35:36,758 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-26 00:35:37,559 - ZwiftApiAuth - INFO - Loaded cached session successfully
+2025-08-26 00:36:48,864 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-26 00:36:48,864 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-26 00:36:48,864 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-26 00:36:49,750 - ZwiftApiAuth - INFO - Loaded cached session successfully

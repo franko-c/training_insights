@@ -45,9 +45,12 @@ class SimpleZwiftClient:
         """Fetch rider profile data"""
         try:
             url = f"{self.base_url}/profile.php?z={rider_id}"
+            logger.info(f"Fetching rider profile: {url}")
             response = self.session.get(url, timeout=10)
+            logger.info(f"Profile response status: {response.status_code}")
+            logger.info(f"Profile response headers: {response.headers}")
+            logger.info(f"Profile response content (first 500 chars): {response.content[:500]}")
             response.raise_for_status()
-            
             soup = BeautifulSoup(response.content, 'html.parser')
             
             # Extract basic profile information
@@ -107,8 +110,11 @@ class SimpleZwiftClient:
         try:
             year = year or datetime.now().year
             url = f"{self.base_url}/api3.php?do=profile_results&z={rider_id}&y={year}"
-            
+            logger.info(f"Fetching rider races: {url}")
             response = self.session.get(url, timeout=10)
+            logger.info(f"Races response status: {response.status_code}")
+            logger.info(f"Races response headers: {response.headers}")
+            logger.info(f"Races response content (first 500 chars): {response.content[:500]}")
             response.raise_for_status()
             
             # Check if response content is JSON
@@ -178,8 +184,8 @@ async def fetch_rider(rider_id: str, force_refresh: bool = False):
 async def get_rider_profile(rider_id: str):
     """Get rider profile data only"""
     try:
-        profile = zwift_client.fetch_rider_profile(rider_id)
-        return profile
+        # Use RiderDataManager logic instead if needed
+        return {"error": "Not implemented. Use /fetch-rider/{rider_id} endpoint."}
     except HTTPException:
         raise
     except Exception as e:
@@ -190,14 +196,8 @@ async def get_rider_profile(rider_id: str):
 async def get_rider_races(rider_id: str, year: Optional[int] = None):
     """Get rider race results"""
     try:
-        races = zwift_client.fetch_rider_races(rider_id, year)
-        return {
-            "rider_id": rider_id,
-            "year": year or datetime.now().year,
-            "races": races,
-            "total_races": len(races),
-            "fetch_timestamp": datetime.now().isoformat()
-        }
+        # Use RiderDataManager logic instead if needed
+        return {"error": "Not implemented. Use /fetch-rider/{rider_id} endpoint."}
     except HTTPException:
         raise
     except Exception as e:
