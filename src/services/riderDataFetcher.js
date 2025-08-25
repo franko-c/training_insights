@@ -5,7 +5,7 @@
 
 export class RiderDataFetcher {
   constructor() {
-    // Use localhost:5000 for the Python API server
+    // API endpoints for Netlify Functions
     this.baseApiPath = '/api'
   }
 
