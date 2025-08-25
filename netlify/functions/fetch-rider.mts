@@ -65,10 +65,8 @@ export default async (req: Request, context: Context) => {
     }
 
     // Execute the Python data collection script 
-    // Use the correct Python executable for Netlify Functions environment
-    const pythonExe = "python3.11"; // Netlify provides python3.11
-    
-    // First install dependencies if needed
+    // Use system Python since virtual env isn't available in Netlify Functions
+    const pythonExe = "python3";    // First install dependencies if needed
     const installCommand = `cd "${process.cwd()}" && python3.11 -m pip install -q requests beautifulsoup4 lxml python-dotenv`;
     console.log(`Installing dependencies: ${installCommand}`);
     
