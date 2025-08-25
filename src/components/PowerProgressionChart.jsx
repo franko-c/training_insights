@@ -18,12 +18,15 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
       eventKeys: eventData ? Object.keys(eventData) : 'none'
     })
     
-    if (eventData?.events?.length >= 3) {
-      calculateProgression()
-    } else {
+    // Clear progression data immediately when event type changes or when there's insufficient data
+    if (!eventData || !eventData.events || eventData.events.length < 3) {
       console.log('📊 Clearing progression data - insufficient events or no data')
       setProgressionData(null)
+      return
     }
+    
+    // Only calculate if we have sufficient data
+    calculateProgression()
   }, [eventData, powerData, dayFilter, selectedEventType])
 
   const calculateProgression = () => {
@@ -347,6 +350,25 @@ const PowerProgressionChart = ({ selectedEventType, eventData, powerData, dayFil
               : 'Processing event data...'
             }
           </p>
+        </div>
+      </div>
+    )
+  }
+
+  // Additional safety check: Don't render if progressionData doesn't match current eventData
+  if (progressionData && eventData && progressionData.events.length !== eventData.events.length) {
+    console.log('⚠️ Data mismatch detected - not rendering to prevent crash:', {
+      progressionDataEvents: progressionData.events.length,
+      eventDataEvents: eventData.events.length,
+      selectedEventType
+    })
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="text-center text-gray-500">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            📈 Event Timeline & Performance Analysis
+          </h3>
+          <p className="text-sm">Updating analysis...</p>
         </div>
       </div>
     )
