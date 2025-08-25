@@ -3,7 +3,7 @@
 
 [build]
   # Build command for the React app
-  command = "npm run build"
+  command = "npm ci && npm run build"
   # Directory to publish (Vite builds to 'dist')
   publish = "dist"
   # Functions directory
@@ -15,6 +15,9 @@
   NPM_VERSION = "9"
   # Python version for zwift_api_client integration
   PYTHON_VERSION = "3.11"
+  # Optimize build performance
+  NPM_CONFIG_FUND = "false"
+  NPM_CONFIG_AUDIT = "false"
 
 # API endpoints routing to functions (MUST come before SPA routing)
 [[redirects]]
