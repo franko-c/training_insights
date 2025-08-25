@@ -104,6 +104,7 @@ const Dashboard = ({ riderData, onRiderChange }) => {
         console.log(`📅 Applied ${dayFilter}-day filter: ${data.events.length} → ${filteredEvents.length} events`)
         setEventData(filteredData)
       } else {
+        console.log(`📅 Using all data (dayFilter=${dayFilter}): ${data?.events?.length || 0} events`)
         setEventData(data)
       }
     } catch (error) {
