@@ -65,9 +65,22 @@ export default async (req: Request, context: Context) => {
     }
 
     // Execute the Python data collection script 
-    // Use system Python since virtual env isn't available in Netlify Functions
-    const pythonExe = "python3";    // First install dependencies if needed
-    const installCommand = `cd "${process.cwd()}" && python3.11 -m pip install -q requests beautifulsoup4 lxml python-dotenv`;
+    // Try different Python paths for Netlify Functions environment
+    const pythonPaths = ["/usr/bin/python3", "/opt/buildhome/python3.11/bin/python3", "python3"];
+    let pythonExe = "python3"; // fallback
+    
+    // Test which Python executable is available
+    for (const pythonPath of pythonPaths) {
+      try {
+        await execAsync(`${pythonPath} --version`);
+        pythonExe = pythonPath;
+        console.log(`Found Python at: ${pythonExe}`);
+        break;
+      } catch (e) {
+        console.log(`Python not found at: ${pythonPath}`);
+      }
+    }    // First install dependencies if needed
+    const installCommand = `cd "${process.cwd()}" && ${pythonExe} -m pip install -q requests beautifulsoup4 lxml python-dotenv`;
     console.log(`Installing dependencies: ${installCommand}`);
     
     try {
