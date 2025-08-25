@@ -6,3 +6,9 @@
 2025-08-25 16:17:12,269 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
 2025-08-25 16:17:12,269 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
 2025-08-25 16:17:12,269 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-25 19:25:15,001 - ZwiftApiAuth - INFO - Loaded environment from: /Users/franoc/TOP/training_insights/zwift_api_client/config/.env
+2025-08-25 19:25:15,001 - ZwiftApiAuth - INFO - ZWIFT_EMAIL loaded: frandevs@pm.me
+2025-08-25 19:25:15,001 - ZwiftApiAuth - INFO - ZWIFT_PASSWORD loaded: [MASKED]
+2025-08-25 19:25:15,002 - ZwiftApiAuth - INFO - Cached session is expired
+2025-08-25 19:25:15,002 - ZwiftApiAuth - INFO - Logging in to ZwiftPower...
+2025-08-25 19:25:21,803 - ZwiftApiAuth - INFO - OAuth login successful!

@@ -1,9 +1,58 @@
 #!/usr/bin/env python3
 """
-Zwift API Client - Data Management CLI Tool (Self-Contained)
+CLI interface for managing rider data operations.
 
-A command-line utility for managing cached rider data, resetting specific riders,
-clearing all data, and performing maintenance operations.
+Provides a unified command-line interface for:
+- Fetching rider profiles and data
+- Managing data storage and updates
+- Running maintenance operations
+"""
+
+import os
+import sys
+import json
+import asyncio
+import logging
+from pathlib import Path
+from typing import Optional, Dict, List, Any
+from datetime import datetime, timedelta
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Import zwift_api_client components
+try:
+    from zwift_api_client import create_rider_manager
+    from zwift_api_client.data.rider_data_manager import RiderDataManager
+    from zwift_api_client.config import get_config
+except ImportError as e:
+    logger.error(f"Failed to import zwift_api_client: {e}")
+    # Try alternative import paths for Railway environment
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from data.rider_data_manager import RiderDataManager
+        from config import get_config
+        
+        def create_rider_manager():
+            """Create a rider manager instance for Railway environment"""
+            from client import ZwiftAPIClient
+            client = ZwiftAPIClient()
+            return RiderDataManager(client)
+            
+    except ImportError as e2:
+        logger.error(f"Alternative import also failed: {e2}")
+        raise ImportError(f"Could not import required modules: {e}, {e2}")
+
+class DataManagerCLI:
+    """
+    Zwift API Client - Data Management CLI Tool (Self-Contained)
+
+    A command-line utility for managing cached rider data, resetting specific riders,
+    clearing all data, and performing maintenance operations.
 
 Usage:
     python data_manager_cli.py --help
@@ -15,13 +64,31 @@ Usage:
 
 import argparse
 import sys
+import os
 from pathlib import Path
 from datetime import datetime
 import json
 import shutil
 
-# Import from the zwift_api_client package
-from zwift_api_client import create_rider_manager
+# Add parent directory to path to import zwift_api_client
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Import the components directly
+try:
+    from zwift_api_client import create_rider_manager
+except ImportError:
+    # Fallback for when running inside the zwift_api_client directory
+    import sys
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, parent_dir)
+    
+    # Direct imports from local modules
+    from data.rider_data_manager import RiderDataManager
+    from client.zwift_client import ZwiftAPIClient
+    
+    def create_rider_manager():
+        client = ZwiftAPIClient()
+        return RiderDataManager(client)
 
 
 class DataManagerCLI:
