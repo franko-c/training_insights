@@ -78,6 +78,13 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False):
             }
         )
 
+
+@app.get("/fetch-rider/{rider_id}")
+async def fetch_rider_get(rider_id: str, force_refresh: Optional[bool] = False):
+    """Support GET requests from the frontend/legacy clients that call the Railway API."""
+    # Delegate to the same implementation
+    return await fetch_rider_data(rider_id, force_refresh=force_refresh)
+
 @app.post("/refresh-rider/{rider_id}")
 async def refresh_rider_data(rider_id: str):
     """Convenience endpoint specifically for refresh operations"""

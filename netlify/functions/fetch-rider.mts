@@ -118,7 +118,8 @@ export default async (req: Request, context: Context) => {
       console.log("Dependencies might already be installed, continuing...");
     }
     
-    const command = `cd "${process.cwd()}" && PYTHONPATH=. ${pythonExe} zwift_api_client/utils/data_manager_cli.py --refresh-rider ${riderId}`;
+  // Run as module to ensure package imports resolve correctly
+  const command = `cd "${process.cwd()}" && PYTHONPATH=. ${pythonExe} -m zwift_api_client.utils.data_manager_cli --refresh-rider ${riderId}`;
     
     try {
       console.log(`Executing: ${command}`);

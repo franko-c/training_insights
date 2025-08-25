@@ -146,21 +146,24 @@ class Config:
         
         # Create formatter
         formatter = logging.Formatter(log_config.get("format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
-        
-        # File handler with rotation
-        from logging.handlers import RotatingFileHandler
-        file_handler = RotatingFileHandler(
-            log_file,
-            maxBytes=log_config.get("max_size_mb", 10) * 1024 * 1024,
-            backupCount=log_config.get("backup_count", 5)
-        )
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-        
-        # Console handler
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
+
+        # Only add handlers when explicitly enabled to avoid duplicate handlers
+        enable_root_logging = os.getenv("ZWIFT_API_CLIENT_ENABLE_ROOT_LOGGING", "false").lower() in ("1", "true", "yes")
+        if enable_root_logging:
+            # File handler with rotation
+            from logging.handlers import RotatingFileHandler
+            file_handler = RotatingFileHandler(
+                log_file,
+                maxBytes=log_config.get("max_size_mb", 10) * 1024 * 1024,
+                backupCount=log_config.get("backup_count", 5)
+            )
+            file_handler.setFormatter(formatter)
+            logger.addHandler(file_handler)
+
+            # Console handler
+            console_handler = logging.StreamHandler()
+            console_handler.setFormatter(formatter)
+            logger.addHandler(console_handler)
     
     def get(self, key_path: str, default: Any = None) -> Any:
         """

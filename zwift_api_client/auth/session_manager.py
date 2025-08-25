@@ -70,8 +70,10 @@ class ZwiftAuthManager:
         self.logger = logging.getLogger("ZwiftApiAuth")
         self.logger.setLevel(logging.INFO)
         
-        # Avoid duplicate handlers
-        if not self.logger.handlers:
+        # Avoid adding handlers unless explicitly enabled via env var.
+        # This prevents duplicate handlers when the module is imported by a larger app.
+        enable_root_logging = os.getenv("ZWIFT_API_CLIENT_ENABLE_ROOT_LOGGING", "false").lower() in ("1", "true", "yes")
+        if enable_root_logging and not self.logger.handlers:
             # File handler
             file_handler = logging.FileHandler(log_file)
             file_handler.setLevel(logging.INFO)
