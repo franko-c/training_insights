@@ -66,6 +66,13 @@ const Dashboard = ({ riderData, onRiderChange }) => {
   // Load event data when type or filter changes
   useEffect(() => {
     console.log('🎯 Dashboard useEffect - Event type changed to:', selectedEventType)
+    
+    // Auto-adjust dayFilter for workouts if they're old
+    if (selectedEventType === 'workouts' && dayFilter > 0) {
+      // Check if we need to auto-expand timeline for workouts
+      console.log('🔍 Checking if workouts need timeline expansion...')
+    }
+    
     if (riderData?.rider_id) {
       loadEventData(riderData.rider_id, selectedEventType)
       loadEventCounts(riderData.rider_id)
@@ -102,6 +109,14 @@ const Dashboard = ({ riderData, onRiderChange }) => {
         }
         
         console.log(`📅 Applied ${dayFilter}-day filter: ${data.events.length} → ${filteredEvents.length} events`)
+        
+        // Auto-expand timeline for workouts if no events found
+        if (selectedEventType === 'workouts' && filteredEvents.length === 0 && data.events.length > 0) {
+          console.log('🔄 Auto-expanding timeline for workouts - switching to All Time')
+          setTimeout(() => setDayFilter(0), 100) // Small delay to prevent infinite loop
+          return
+        }
+        
         setEventData(filteredData)
       } else {
         console.log(`📅 Using all data (dayFilter=${dayFilter}): ${data?.events?.length || 0} events`)
