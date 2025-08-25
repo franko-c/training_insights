@@ -2,8 +2,8 @@
 # https://docs.netlify.com/configure-builds/file-based-configuration/
 
 [build]
-  # Build command for the React app
-  command = "npm ci && npm run build"
+  # Build command for the React app - simplified
+  command = "npm run build"
   # Directory to publish (Vite builds to 'dist')
   publish = "dist"
   # Functions directory

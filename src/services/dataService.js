@@ -70,10 +70,20 @@ export class DataService {
       const filePath = `/data/riders/${riderId}/${fileName}.json`
       console.log(`Attempting to load: ${filePath}`)
       const response = await fetch(filePath)
+      
       if (!response.ok) {
+        console.error(`HTTP Error ${response.status} for ${filePath}`)
         throw new Error(`Failed to load ${fileName}: ${response.status}`)
       }
-      const data = await response.json()
+      
+      // Check content type
+      const contentType = response.headers.get('content-type')
+      console.log(`Content-Type for ${filePath}: ${contentType}`)
+      
+      const text = await response.text()
+      console.log(`Response text preview for ${filePath}:`, text.substring(0, 100))
+      
+      const data = JSON.parse(text)
       this.cache.set(fileKey, data)
       return data
     } catch (error) {
