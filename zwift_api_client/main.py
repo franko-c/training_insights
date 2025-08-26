@@ -5,6 +5,7 @@ import os
 import sys
 import logging
 from typing import Optional
+import requests
 import json
 from pathlib import Path
 
@@ -29,6 +30,41 @@ app.add_middleware(
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+def dispatch_github_workflow(rider_id: str) -> None:
+    """Dispatch a GitHub Actions workflow (workflow_dispatch) to persist generated JSON.
+
+    This runs in the background and is best-effort. Requires the following env vars:
+    - GITHUB_PAT (Personal Access Token with repo+workflow scopes)
+    - GITHUB_REPO (owner/repo)
+    - GITHUB_BRANCH (branch to dispatch against; defaults to 'master')
+    - GITHUB_WORKFLOW_FILE (workflow filename or id; defaults to 'generate-rider-data.yml')
+    """
+    pat = os.getenv("GITHUB_PAT")
+    repo = os.getenv("GITHUB_REPO")
+    branch = os.getenv("GITHUB_BRANCH", "master")
+    workflow_file = os.getenv("GITHUB_WORKFLOW_FILE", "generate-rider-data.yml")
+
+    if not pat or not repo:
+        logger.info("GITHUB_PAT or GITHUB_REPO not set; skipping GitHub workflow dispatch")
+        return
+
+    url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_file}/dispatches"
+    headers = {
+        "Authorization": f"token {pat}",
+        "Accept": "application/vnd.github+json",
+    }
+    payload = {"ref": branch, "inputs": {"rider_id": str(rider_id)}}
+
+    try:
+        resp = requests.post(url, json=payload, headers=headers, timeout=10)
+        if resp.status_code in (204, 201, 200):
+            logger.info(f"Dispatched GitHub workflow '{workflow_file}' for rider {rider_id}")
+        else:
+            logger.warning(f"Failed to dispatch workflow: {resp.status_code} {resp.text}")
+    except Exception as e:
+        logger.exception(f"Error dispatching GitHub workflow for rider {rider_id}: {e}")
+
 class RiderRequest(BaseModel):
     rider_id: str
     force_refresh: Optional[bool] = False
@@ -42,24 +78,21 @@ async def health_check():
     return {"status": "healthy", "service": "zwift-api-client"}
 
 @app.post("/fetch-rider/{rider_id}")
-async def fetch_rider_data(rider_id: str, force_refresh: bool = False):
+async def fetch_rider_data(rider_id: str, force_refresh: bool = False, background_tasks: BackgroundTasks = None):
     """
     Handle both new rider fetching AND refresh operations
     This replaces ALL Python script calls from Netlify functions
     """
     try:
         logger.info(f"Processing rider {rider_id}, force_refresh={force_refresh}")
-        
+
         # Create CLI instance
         cli = DataManagerCLI()
-        
-        # Call the appropriate method
-        if force_refresh:
-            result = cli.refresh_rider(rider_id)
-        else:
-            # For new riders, also use refresh since it fetches data
-            result = cli.refresh_rider(rider_id, force=False)
-        
+
+        # For both new fetches and explicit refreshes we want the freshest data.
+        # Treat incoming requests as force_refresh to ensure landing page pulls fresh data.
+        result = cli.refresh_rider(rider_id, force=True)
+
         logger.info(f"Successfully processed rider {rider_id}")
 
         # Attempt to load produced JSON files (profile is critical for frontend)
@@ -80,16 +113,22 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False):
         except Exception as e:
             logger.warning(f"Error reading generated files for {rider_id}: {e}")
 
+        # Schedule background dispatch to persist generated JSON via GitHub Actions
+        try:
+            if background_tasks is not None:
+                background_tasks.add_task(dispatch_github_workflow, rider_id)
+        except Exception:
+            logger.exception("Failed to schedule background GitHub workflow dispatch")
+
         return {
             "success": True,
             "rider_id": rider_id,
-            "force_refresh": force_refresh,
+            "force_refresh": True,
             "result": str(result),
-            "message": f"Rider {rider_id} data {'refreshed' if force_refresh else 'fetched'} successfully",
+            "message": f"Rider {rider_id} data refreshed successfully",
             "files": files,
             "profile": profile,
         }
-        
     except Exception as e:
         logger.error(f"Error processing rider {rider_id}: {str(e)}")
         raise HTTPException(
@@ -97,7 +136,7 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False):
             detail={
                 "error": str(e),
                 "rider_id": rider_id,
-                "operation": "refresh" if force_refresh else "fetch"
+                "operation": "refresh"
             }
         )
 
