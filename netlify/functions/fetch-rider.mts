@@ -1,206 +1,79 @@
 import { Context } from "@netlify/functions";
-import { exec } from "child_process";
-import { promisify } from "util";
 import path from "path";
 import fs from "fs/promises";
 
-const execAsync = promisify(exec);
+const RAILWAY_URL = process.env.RAILWAY_API_URL || "https://zwiftervals-production.up.railway.app";
+
+function jsonResponse(obj: any, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
+}
 
 export default async (req: Request, context: Context) => {
-  // Handle CORS preflight
+  // Basic CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
-      }
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      },
     });
   }
 
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { "Content-Type": "application/json" }
-    });
+    return jsonResponse({ error: "Method not allowed" }, 405);
   }
 
+  let body: any;
   try {
-    const body = await req.json();
-    const { riderId, force_refresh } = body;
+    body = await req.json();
+  } catch (e) {
+    return jsonResponse({ success: false, error: "INVALID_JSON", message: "Invalid JSON body" }, 400);
+  }
 
-    if (!riderId || !/^\d{6,8}$/.test(riderId.toString())) {
-      return new Response(JSON.stringify({ 
-        error: "Invalid rider ID. Must be 6-8 digits." 
-      }), {
-        status: 400,
-        headers: { 
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-    }
+  const { riderId, force_refresh } = body || {};
+  if (!riderId || !/^\d{6,8}$/.test(String(riderId))) {
+    return jsonResponse({ success: false, error: "INVALID_RIDER_ID", message: "riderId must be 6-8 digits" }, 400);
+  }
 
-    // Check if rider data already exists (unless force refresh)
-    const dataPath = path.join(process.cwd(), "public", "data", "riders", riderId.toString());
-    
-    if (!force_refresh) {
-      try {
-        await fs.access(path.join(dataPath, "profile.json"));
-        return new Response(JSON.stringify({
-          success: true,
-          message: `Rider ${riderId} data already exists`,
-          riderId: riderId.toString()
-        }), {
-          status: 200,
-          headers: { 
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          }
-        });
-      } catch {
-        // Data doesn't exist, proceed with fetch
-      }
-    }
+  // Primary behavior: proxy the request to Railway which runs the Python tooling and returns JSON.
+  const targetUrl = `${RAILWAY_URL}/fetch-rider/${encodeURIComponent(riderId)}${force_refresh ? "?force_refresh=true" : ""}`;
 
-    // Execute the Python data collection script 
-    // Try different Python paths for Netlify Functions environment
-    const pythonPaths = [
-      "/opt/buildhome/python3.11/bin/python",
-      "/opt/buildhome/python3.11/bin/python3", 
-      "/opt/buildhome/python3/bin/python",
-      "/opt/buildhome/python3/bin/python3",
-      "/usr/bin/python3", 
-      "/usr/bin/python",
-      "python3",
-      "python"
-    ];
-    let pythonExe: string | null = null;
-    
-    // Test which Python executable is available
-    for (const pythonPath of pythonPaths) {
-      try {
-        await execAsync(`${pythonPath} --version`);
-        pythonExe = pythonPath;
-        console.log(`Found Python at: ${pythonExe}`);
-        break;
-      } catch (e) {
-        console.log(`Python not found at: ${pythonPath}`);
-      }
-    }
-    
-    if (!pythonExe) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: "PYTHON_NOT_FOUND",
-        message: "No Python executable found in the environment",
-        instructions: [
-          "1. Python runtime not available in Netlify Functions",
-          "2. Check Netlify build configuration", 
-          "3. Ensure Python runtime is properly configured"
-        ]
-      }), {
-        status: 500,
-        headers: { 
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-    }    // First install dependencies if needed
-    const installCommand = `cd "${process.cwd()}" && ${pythonExe} -m pip install -q requests beautifulsoup4 lxml python-dotenv`;
-    console.log(`Installing dependencies: ${installCommand}`);
-    
-    try {
-      await execAsync(installCommand);
-      console.log("Dependencies installed successfully");
-    } catch (installError) {
-      console.log("Dependencies might already be installed, continuing...");
-    }
-    
-  // Run as module to ensure package imports resolve correctly
-  const command = `cd "${process.cwd()}" && PYTHONPATH=. ${pythonExe} -m zwift_api_client.utils.data_manager_cli --refresh-rider ${riderId}`;
-    
-    try {
-      console.log(`Executing: ${command}`);
-      const { stdout, stderr } = await execAsync(command);
-      
-      if (stderr && !stderr.includes('UserWarning')) {
-        console.error(`Python script stderr: ${stderr}`);
-        if (stderr.includes('Error') || stderr.includes('Exception')) {
-          throw new Error(`Python script failed: ${stderr}`);
-        }
-      }
-      
-      console.log(`Python script output: ${stdout}`);
-      
-      // Copy data from zwift_api_client to public directory
-      const sourceDataPath = path.join(process.cwd(), "zwift_api_client", "data", "riders", riderId.toString());
-      const targetDataPath = path.join(process.cwd(), "public", "data", "riders", riderId.toString());
-      
-      try {
-        await fs.mkdir(targetDataPath, { recursive: true });
-        const files = await fs.readdir(sourceDataPath);
-        const jsonFiles = files.filter(file => file.endsWith('.json'));
-        
-        for (const file of jsonFiles) {
-          const sourcePath = path.join(sourceDataPath, file);
-          const targetPath = path.join(targetDataPath, file);
-          await fs.copyFile(sourcePath, targetPath);
-          console.log(`Copied ${file} to public data directory`);
-        }
-        
-        console.log(`Successfully copied ${jsonFiles.length} data files for rider ${riderId}`);
-      } catch (copyError) {
-        console.error(`Data copy error:`, copyError);
-      }
-      
-      return new Response(JSON.stringify({
-        success: true,
-        message: `Successfully fetched data for rider ${riderId}`,
-        riderId: riderId.toString(),
-        output: stdout
-      }), {
-        status: 200,
-        headers: { 
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-      
-    } catch (execError) {
-      console.error(`Python execution error:`, execError);
-      
-      return new Response(JSON.stringify({
-        success: false,
-        error: "PYTHON_EXECUTION_FAILED",
-        message: `Failed to fetch data for rider ${riderId}. Error: ${execError.message}`,
-        instructions: [
-          "1. Verify Python environment is set up correctly",
-          "2. Check Zwift API credentials", 
-          "3. Ensure zwift_api_client dependencies are installed",
-          `4. Try running manually: python3 zwift_api_client/utils/data_manager_cli.py --refresh-rider ${riderId}`
-        ]
-      }), {
-        status: 500,
-        headers: { 
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-    }
-
-  } catch (error) {
-    console.error("Error in fetch-rider function:", error);
-    return new Response(JSON.stringify({ 
-      error: "Internal server error",
-      message: error.message 
-    }), {
-      status: 500,
-      headers: { 
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      }
+  try {
+    const railwayResp = await fetch(targetUrl, {
+      method: "GET",
+      headers: { "Accept": "application/json" },
     });
+
+    if (railwayResp.ok) {
+      // Stream the JSON response back to the client without printing everything in logs.
+      const data = await railwayResp.json();
+
+      // Optionally, return a compact response to the frontend while preserving full payload under "result".
+      return jsonResponse({ success: true, riderId: String(riderId), result: data });
+    }
+
+    // If Railway returned non-OK, fall through to static fallback
+    console.warn(`Railway returned status ${railwayResp.status} for rider ${riderId}`);
+  } catch (e) {
+    console.warn(`Error contacting Railway for rider ${riderId}: ${e.message || e}`);
+  }
+
+  // Static fallback: if a previously generated file exists in the deployed public folder, return that.
+  try {
+    const staticPath = path.join(process.cwd(), "public", "data", "riders", String(riderId), "profile.json");
+    const raw = await fs.readFile(staticPath, { encoding: "utf-8" });
+    const json = JSON.parse(raw);
+    return jsonResponse({ success: true, riderId: String(riderId), fallback: true, profile: json });
+  } catch (e) {
+    // Nothing available
+    return jsonResponse({ success: false, error: "RAILWAY_AND_STATIC_UNAVAILABLE", message: "Unable to fetch from Railway and no static data found" }, 502);
   }
 };
