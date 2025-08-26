@@ -62,8 +62,11 @@ def dispatch_github_workflow(rider_id: str) -> None:
             logger.info(f"Dispatched GitHub workflow '{workflow_file}' for rider {rider_id}")
         else:
             logger.warning(f"Failed to dispatch workflow: {resp.status_code} {resp.text}")
+        # Return response details for optional synchronous callers
+        return {"status_code": resp.status_code, "text": resp.text}
     except Exception as e:
         logger.exception(f"Error dispatching GitHub workflow for rider {rider_id}: {e}")
+        return {"error": str(e)}
 
 class RiderRequest(BaseModel):
     rider_id: str
@@ -142,15 +145,33 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False, backgroun
 
 
 @app.get("/fetch-rider/{rider_id}")
-async def fetch_rider_get(rider_id: str, force_refresh: Optional[bool] = False):
-    """Support GET requests from the frontend/legacy clients that call the Railway API."""
-    # Delegate to the same implementation
-    return await fetch_rider_data(rider_id, force_refresh=force_refresh)
+async def fetch_rider_get(rider_id: str, force_refresh: Optional[bool] = False, background_tasks: BackgroundTasks = None):
+    """Support GET requests from the frontend/legacy clients that call the Railway API.
+
+    Pass BackgroundTasks through so GET calls (used by the landing page) will
+    schedule the background GitHub Actions workflow dispatch to persist generated JSON.
+    """
+    # Delegate to the same implementation and forward background tasks
+    return await fetch_rider_data(rider_id, force_refresh=force_refresh, background_tasks=background_tasks)
 
 @app.post("/refresh-rider/{rider_id}")
 async def refresh_rider_data(rider_id: str):
     """Convenience endpoint specifically for refresh operations"""
     return await fetch_rider_data(rider_id, force_refresh=True)
+
+
+@app.post("/dispatch-workflow/{rider_id}")
+async def dispatch_workflow_now(rider_id: str):
+    """Diagnostic endpoint: synchronously attempt to dispatch the GitHub Actions workflow
+
+    This is for debugging environment / permission issues. In production this endpoint
+    can be removed. Returns the HTTP response from the GitHub API or an error.
+    """
+    try:
+        result = dispatch_github_workflow(rider_id)
+        return {"dispatched": True, "result": result}
+    except Exception as e:
+        return {"dispatched": False, "error": str(e)}
 
 if __name__ == "__main__":
     import uvicorn
