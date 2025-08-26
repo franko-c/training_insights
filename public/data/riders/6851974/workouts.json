@@ -1,0 +1,24 @@
+{
+  "extraction_date": "2025-08-26T02:29:14.104096",
+  "total_workouts": 1,
+  "latest_workout_date": "2024-11-17",
+  "workouts": [
+    {
+      "event_title": "1 Daniel Hobson  [GTR]",
+      "event_date": "2024-11-17",
+      "event_timestamp": 1731864300,
+      "position": 4,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 172,
+      "avg_wkg": "2.6",
+      "team": "GTR",
+      "distance": 0,
+      "points": ""
+    }
+  ],
+  "source": "profile_results_api",
+  "note": "Structured training workouts only - optimized for training analysis"
+}

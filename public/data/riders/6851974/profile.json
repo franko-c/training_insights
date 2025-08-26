@@ -1,0 +1,23 @@
+{
+  "rider_id": "6851974",
+  "extraction_date": "2025-08-26T02:29:06.891288",
+  "name": "1 Daniel Hobson [GTR]",
+  "athlete_id": "0",
+  "zwift_id": "6851974",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/106f77c2-3093387",
+  "team": "GTR",
+  "team_id": "19667",
+  "category": "B",
+  "weight": 66.7,
+  "ftp": 270,
+  "wkg": 4.05,
+  "zwift_racing_score": 574.0,
+  "strava_url": "https://www.strava.com/athletes/0",
+  "power_summary": {
+    "15s": 651,
+    "1min": 450,
+    "5min": 331,
+    "20min": 288
+  }
+}
