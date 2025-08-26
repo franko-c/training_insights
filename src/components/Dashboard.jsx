@@ -213,11 +213,11 @@ const Dashboard = ({ riderData, onRiderChange }) => {
                 👤 Switch Rider
               </button>
               <button
-                onClick={() => alert('Data refresh is temporarily disabled.\n\nThe refresh feature requires Python runtime which is not currently available in the Netlify Functions environment.\n\nTo add new riders, use the main landing page.')}
-                className="px-3 py-1 text-sm bg-gray-100 text-gray-500 rounded-md transition-colors cursor-not-allowed"
-                title="Refresh currently unavailable (Python runtime not configured)"
+                onClick={forceDataRefresh}
+                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors"
+                title="Refresh data from backend"
               >
-                🔄 Reload Data (Disabled)
+                🔄 Reload Data
               </button>
               <div className="text-right">
                 <div className="text-sm text-gray-500">Category</div>

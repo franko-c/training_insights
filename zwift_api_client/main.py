@@ -123,6 +123,15 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False, backgroun
         except Exception:
             logger.exception("Failed to schedule background GitHub workflow dispatch")
 
+        # Diagnostic: report presence of GitHub dispatch env vars so we can tell
+        # whether the deployed process is configured to persist generated JSON.
+        github_env = {
+            "GITHUB_PAT_set": bool(os.getenv("GITHUB_PAT")),
+            "GITHUB_REPO_set": bool(os.getenv("GITHUB_REPO")),
+            "GITHUB_BRANCH": os.getenv("GITHUB_BRANCH"),
+            "GITHUB_WORKFLOW_FILE": os.getenv("GITHUB_WORKFLOW_FILE"),
+        }
+
         return {
             "success": True,
             "rider_id": rider_id,
@@ -131,6 +140,7 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False, backgroun
             "message": f"Rider {rider_id} data refreshed successfully",
             "files": files,
             "profile": profile,
+            "github_env": github_env,
         }
     except Exception as e:
         logger.error(f"Error processing rider {rider_id}: {str(e)}")

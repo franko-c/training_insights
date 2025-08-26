@@ -99,15 +99,17 @@ class DataManagerCLI:
         print("-" * 30)
         try:
             rider_data = self.rider_manager.get_complete_rider_data_proven(rider_id, force_refresh=force)
-            if rider_data.get("success"):
+            if isinstance(rider_data, dict) and rider_data.get("success"):
                 sources = rider_data.get("data_sources", [])
                 print(f"Successfully refreshed rider {rider_id}")
                 if sources:
                     print(f"Data sources: {', '.join(sources)}")
             else:
-                print(f"Failed to refresh rider: {rider_data.get('error', 'Unknown')}")
+                print(f"Failed to refresh rider: {rider_data.get('error', 'Unknown') if isinstance(rider_data, dict) else rider_data}")
+            return rider_data
         except Exception as e:
             print(f"Error refreshing rider: {e}")
+            return {"success": False, "error": str(e)}
 
     def clear_all_data(self):
         print("Clear All Cached Data")
