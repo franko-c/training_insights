@@ -1,8 +1,23 @@
 {
-  "extraction_date": "2025-08-26T02:43:08.713214",
-  "total_races": 68,
-  "latest_race_date": "2025-08-25",
+  "extraction_date": "2025-08-26T20:19:30.540429",
+  "total_races": 69,
+  "latest_race_date": "2025-08-26",
   "races": [
+    {
+      "event_title": "1 Daniel Hobson  [GTR]",
+      "event_date": "2025-08-26",
+      "event_timestamp": 1756229400,
+      "position": 7,
+      "position_in_category": 0,
+      "category": "SEE LADDER SITE",
+      "event_type": "TYPE_RACE TYPE_RACE",
+      "time": 0.0,
+      "avg_power": 269,
+      "avg_wkg": "4.0",
+      "team": "GTR",
+      "distance": 24,
+      "points": ""
+    },
     {
       "event_title": "1 Daniel Hobson  [GTR]",
       "event_date": "2025-08-25",
