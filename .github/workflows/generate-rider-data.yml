@@ -48,6 +48,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "=== Debug: repo info ==="
+          git remote -v || true
+          git status --porcelain || true
+          git branch --show-current || git rev-parse --abbrev-ref HEAD || true
+          echo "=== Debug: generated files ==="
+          ls -la public/data/riders/${{ inputs.rider_id }} || true
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/data/riders/${{ inputs.rider_id }} || true
@@ -55,5 +61,6 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "chore: add/update generated rider data for ${{ inputs.rider_id }}"
-            git push origin HEAD:${{ github.ref_name }}
+            echo "Pushing to origin HEAD:${{ github.ref_name }} with token"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }} --verbose
           fi
