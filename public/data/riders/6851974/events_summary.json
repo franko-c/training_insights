@@ -1,10 +1,10 @@
 {
-  "extraction_date": "2025-08-26T02:43:08.713214",
-  "total_events": 82,
+  "extraction_date": "2025-08-26T20:19:30.540429",
+  "total_events": 83,
   "summary": {
     "races": {
-      "count": 68,
-      "latest_date": "2025-08-25",
+      "count": 69,
+      "latest_date": "2025-08-26",
       "file": "races.json"
     },
     "group_rides": {
