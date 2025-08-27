@@ -41,7 +41,7 @@ def dispatch_github_workflow(rider_id: str) -> None:
     - GITHUB_BRANCH (branch to dispatch against; defaults to 'master')
     - GITHUB_WORKFLOW_FILE (workflow filename or id; defaults to 'generate-rider-data.yml')
     """
-    pat = os.getenv("GITHUB_PAT")
+    pat = os.getenv("GITHUB_PAT") or os.getenv("GITHUB_TOKEN")
     repo = os.getenv("GITHUB_REPO")
     branch = os.getenv("GITHUB_BRANCH", "master")
     workflow_file = os.getenv("GITHUB_WORKFLOW_FILE", "generate-rider-data.yml")
