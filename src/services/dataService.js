@@ -4,6 +4,10 @@ export class DataService {
   constructor() {
     this.baseDataPath = './data/riders'
     this.cache = new Map()
+  // TTL (ms) for considering persisted CDN files fresh. Default 5 minutes.
+  this.persistedTtlMs = 1000 * 60 * 5
+  // Optional progress callback used by the UI to receive step updates
+  this.onProgress = null
   }
 
   // Clear cache - useful for debugging
@@ -21,8 +25,14 @@ export class DataService {
 
     try {
       // Load all rider data files in parallel
-      const [profile, power, races, groupRides, workouts, eventsSummary] = await Promise.all([
-        this.loadRiderFile(riderId, 'profile'),
+      // Load profile first (fast-path) so UI can render immediately. Other files load in parallel.
+      const profile = await this.loadRiderFile(riderId, 'profile')
+      if (!profile) throw new Error(`No profile data found for rider ${riderId}`)
+
+      // Fire progress update: profile ready
+      if (this.onProgress) this.onProgress({ step: 'profile', message: 'Profile loaded' })
+
+      const [power, races, groupRides, workouts, eventsSummary] = await Promise.all([
         this.loadRiderFile(riderId, 'power'),
         this.loadRiderFile(riderId, 'races'),
         this.loadRiderFile(riderId, 'group_rides'),
@@ -67,7 +77,7 @@ export class DataService {
 
     try {
       // Use the public directory path for now (until we implement true self-containment)
-      const filePath = `/data/riders/${riderId}/${fileName}.json`
+  const filePath = `/data/riders/${riderId}/${fileName}.json`
       console.log(`Attempting to load: ${filePath}`)
       const response = await fetch(filePath)
       
@@ -83,101 +93,24 @@ export class DataService {
       const text = await response.text()
       console.log(`Response text preview for ${filePath}:`, text.substring(0, 100))
 
-      // If server returned HTML (likely index.html due to SPA fallback), treat as missing file
-      if (contentType && contentType.includes('text/html')) {
-        console.error(`Expected JSON but received HTML for ${filePath} - treating as missing`)
 
-        // Prefer calling the Railway backend directly when configured. This avoids Netlify
-        // function timeouts in branch previews and removes the proxy from the critical path.
-        const railwayUrl = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_RAILWAY_URL) || (typeof window !== 'undefined' && window.RAILWAY_URL)
+      // If server returned HTML (SPA fallback) or non-JSON, treat as missing persisted file.
+      if (!contentType || !contentType.includes('application/json')) {
+        console.warn(`Expected JSON but received ${contentType || 'unknown'} for ${filePath} - treating as missing`)
 
-        if (railwayUrl) {
-          try {
-            console.log(`Attempting direct Railway fetch for rider ${riderId} at ${railwayUrl}`)
-            const url = `${railwayUrl.replace(/\/$/, '')}/fetch-rider/${encodeURIComponent(riderId)}?force_refresh=true`
-            const r = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } })
-            if (!r.ok) {
-              console.error(`Railway returned ${r.status} for rider ${riderId}`)
-              throw new Error(`Railway fetch failed: ${r.status}`)
-            }
-            const payload = await r.json()
-
-            // payload may contain top-level `profile` or `result.profile`.
-            if (payload && payload.profile) {
-              this.cache.set(fileKey, payload.profile)
-              return payload.profile
-            }
-            if (payload && payload.result && typeof payload.result === 'object' && payload.result.profile) {
-              this.cache.set(fileKey, payload.result.profile)
-              return payload.result.profile
-            }
-            // If Railway returned a mapping of files under `result.files` (rare), use it.
-            if (payload && payload.result && payload.result.files && payload.result.files[fileName + '.json']) {
-              const parsed = payload.result.files[fileName + '.json']
-              this.cache.set(fileKey, parsed)
-              return parsed
-            }
-
-            throw new Error('Railway returned unexpected payload shape')
-          } catch (err) {
-            console.error(`Direct Railway fetch failed for rider ${riderId}:`, err)
-            // Fall through to Netlify function fallback below
-          }
-        }
-
-        // Fallback: Attempt to trigger live fetch via Netlify function and return that result to the UI.
-        try {
-          console.log(`Attempting live fetch via Netlify function for rider ${riderId}`)
-          const funcResp = await fetch('/.netlify/functions/fetch-rider', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ riderId: String(riderId), force_refresh: true })
-          })
-
-          if (!funcResp.ok) {
-            console.error(`Netlify function returned ${funcResp.status} when fetching rider ${riderId}`)
-            throw new Error(`Missing JSON file ${filePath} and live fetch failed (${funcResp.status})`)
-          }
-
-          const payload = await funcResp.json()
-
-          // Prefer top-level profile
-          if (payload && payload.profile) {
-            this.cache.set(fileKey, payload.profile)
-            return payload.profile
-          }
-
-          // Then look under result.profile
-          if (payload && payload.result && typeof payload.result === 'object' && payload.result.profile) {
-            this.cache.set(fileKey, payload.result.profile)
-            return payload.result.profile
-          }
-
-          // If the function returned a map of files under result.files
-          if (payload && payload.result && payload.result.files && payload.result.files[fileName + '.json']) {
-            const parsed = payload.result.files[fileName + '.json']
-            this.cache.set(fileKey, parsed)
-            return parsed
-          }
-
-          if (payload && payload.success && payload.fallback && payload.profile && fileName === 'profile') {
-            this.cache.set(fileKey, payload.profile)
-            return payload.profile
-          }
-
-          throw new Error(`Live fetch returned unexpected payload: ${JSON.stringify(payload).substring(0,200)}`)
-        } catch (err) {
-          console.error(`Live fetch attempt failed for rider ${riderId}:`, err)
-          throw err
-        }
+        // If the file is missing, we prefer not to trigger a live refresh automatically.
+        // Instead, expose a graceful fallback so the UI can decide whether to request a live scrape.
+        // Return null to indicate missing persisted file.
+        return null
       }
 
-      const data = JSON.parse(text)
+  const data = JSON.parse(text)
       this.cache.set(fileKey, data)
       return data
     } catch (error) {
       console.error(`Error loading file ${fileName} for rider ${riderId}:`, error)
-      throw error
+  // In case of any error, return null so caller can decide how to proceed
+  return null
     }
   }
 

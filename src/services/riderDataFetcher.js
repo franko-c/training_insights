@@ -8,6 +8,8 @@ export class RiderDataFetcher {
   // API endpoints
   this.netlifyApiPath = '/api'
   this.railwayApiBase = 'https://zwiftervals-production.up.railway.app'
+  // Optional progress callback set by UI
+  this.onProgress = null
   }
 
   /**
@@ -15,8 +17,29 @@ export class RiderDataFetcher {
    */
   async hasRiderData(riderId) {
     try {
-      const response = await fetch(`/data/riders/${riderId}/profile.json`)
-      return response.ok
+      const response = await fetch(`/data/riders/${riderId}/profile.json`, { method: 'GET' })
+      if (!response.ok) return false
+
+      const contentType = response.headers.get('content-type') || ''
+      // If the server returned HTML (SPA fallback) treat as missing
+      if (contentType.includes('text/html')) {
+        console.warn(`hasRiderData: received HTML for /data/riders/${riderId}/profile.json - treating as missing`) 
+        return false
+      }
+
+      // Prefer explicit JSON content-type; attempt to parse as a final safeguard
+      if (contentType.includes('application/json')) {
+        try {
+          const json = await response.json()
+          return !!json
+        } catch (err) {
+          console.warn('hasRiderData: JSON parse failed, treating as missing', err)
+          return false
+        }
+      }
+
+      // Unknown content-type: be conservative and treat as missing
+      return false
     } catch (error) {
       return false
     }
@@ -28,10 +51,12 @@ export class RiderDataFetcher {
    */
   async fetchRiderData(riderId) {
     try {
-      // Try Railway API first
-      const response = await fetch(`${this.railwayApiBase}/fetch-rider/${riderId}`)
+  // Try Railway API first (do not force refresh by default)
+  if (this.onProgress) this.onProgress({ step: 'start', message: 'Attempting cached or fast fetch' })
+  const response = await fetch(`${this.railwayApiBase}/fetch-rider/${riderId}`)
       if (response.ok) {
         const result = await response.json()
+        if (this.onProgress) this.onProgress({ step: 'railway', message: 'Railway returned data' })
         if (result.success !== false) {
           return result
         }
@@ -66,10 +91,12 @@ export class RiderDataFetcher {
    */
   async refreshRiderData(riderId) {
     try {
-      // Try Railway API first
-      const response = await fetch(`${this.railwayApiBase}/fetch-rider/${riderId}?force_refresh=true`)
+  // Try Railway API first and explicitly request a forced refresh
+  if (this.onProgress) this.onProgress({ step: 'start', message: 'Requesting live refresh' })
+  const response = await fetch(`${this.railwayApiBase}/fetch-rider/${riderId}?force_refresh=true`)
       if (response.ok) {
         const result = await response.json()
+        if (this.onProgress) this.onProgress({ step: 'done', message: 'Live refresh complete' })
         if (result.success !== false) {
           return result
         }
