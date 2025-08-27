@@ -56,7 +56,13 @@ export default async (req: Request, context: Context) => {
       // Stream the JSON response back to the client without printing everything in logs.
       const data = await railwayResp.json();
 
-      // Optionally, return a compact response to the frontend while preserving full payload under "result".
+      // If Railway already returned structured fields like `profile` and `files`,
+      // expose them at the top-level to match the direct-Railway shape. Otherwise
+      // preserve the full payload under `result` so the client can inspect it.
+      if (data && (data.profile || data.files)) {
+        return jsonResponse(Object.assign({ success: true, riderId: String(riderId) }, data));
+      }
+
       return jsonResponse({ success: true, riderId: String(riderId), result: data });
     }
 
