@@ -55,9 +55,15 @@ const LandingPage = ({ onRiderSelected }) => {
     }
 
     try {
-      await riderDataFetcher.refreshRiderData(pendingRiderId)
+      const result = await riderDataFetcher.refreshRiderData(pendingRiderId)
       setProgress('Live fetch complete — opening dashboard')
-      onRiderSelected(pendingRiderId)
+      // If the fetch returned structured data, pass it through to the app so
+      // the app can use it immediately (avoids relying on persisted /data files)
+      if (result && typeof result === 'object') {
+        onRiderSelected(result)
+      } else {
+        onRiderSelected(pendingRiderId)
+      }
     } catch (err) {
       setError(err.message || 'Live fetch failed')
     } finally {
