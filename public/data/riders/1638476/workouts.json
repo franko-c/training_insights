@@ -1,0 +1,69 @@
+{
+  "extraction_date": "2025-08-27T19:30:58.177772",
+  "total_workouts": 4,
+  "latest_workout_date": "2022-10-24",
+  "workouts": [
+    {
+      "event_title": "Bob Walker [Vision/NTS]",
+      "event_date": "2022-10-24",
+      "event_timestamp": 1666627200,
+      "position": 22,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 178,
+      "avg_wkg": "2.3",
+      "team": "GTR",
+      "distance": 0,
+      "points": ""
+    },
+    {
+      "event_title": "Bob Walker [Vision/NTS]",
+      "event_date": "2022-01-04",
+      "event_timestamp": 1641312000,
+      "position": 112,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 185,
+      "avg_wkg": "2.4",
+      "team": "GTR",
+      "distance": 0,
+      "points": ""
+    },
+    {
+      "event_title": "Bob Walker [Vision/NTS]",
+      "event_date": "2020-11-16",
+      "event_timestamp": 1605551400,
+      "position": 51,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 157,
+      "avg_wkg": "2.0",
+      "team": "GTR",
+      "distance": 0,
+      "points": ""
+    },
+    {
+      "event_title": "Bob Walker [Vision/NTS]",
+      "event_date": "2020-11-02",
+      "event_timestamp": 1604345400,
+      "position": 27,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 182,
+      "avg_wkg": "2.4",
+      "team": "GTR",
+      "distance": 0,
+      "points": ""
+    }
+  ],
+  "source": "profile_results_api",
+  "note": "Structured training workouts only - optimized for training analysis"
+}
