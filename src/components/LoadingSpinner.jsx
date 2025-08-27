@@ -7,14 +7,14 @@ const LoadingSpinner = ({ message = 'Loading...', size = 'normal', overlay = fal
     large: 'w-12 h-12'
   }
 
-  const containerClasses = overlay 
+  const containerClasses = overlay
     ? "fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50"
-    : "min-h-screen bg-gray-100 flex items-center justify-center"
+    : "flex items-center justify-center"
 
   return (
     <div className={containerClasses}>
-      <div className="text-center bg-white p-6 rounded-lg shadow-lg">
-        <div 
+      <div className={`text-center ${overlay ? 'bg-white p-6 rounded-lg shadow-lg' : ''}`}>
+        <div
           className={`loading-spinner ${sizeClasses[size]} border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto mb-4`}
           style={{ animation: 'spin 1s linear infinite' }}
         />

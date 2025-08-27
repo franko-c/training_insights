@@ -71,9 +71,29 @@ const LandingPage = ({ onRiderSelected }) => {
         </div>
 
         {loading ? (
-          <div className="text-center py-8">
-            <LoadingSpinner />
-            <p className="text-gray-600 mt-4 text-sm">{progress}</p>
+          <div className="space-y-6">
+            <div className="text-center py-4">
+              <LoadingSpinner message={progress || 'Fetching rider data...'} size="large" />
+            </div>
+
+            {/* Skeleton cards to progressively fill */}
+            <div className="grid grid-cols-1 gap-4">
+              <div className="animate-pulse bg-gray-50 rounded-lg p-4 shadow-sm">
+                <div className="h-6 bg-gray-200 rounded w-1/3 mb-3" />
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                <div className="h-4 bg-gray-200 rounded w-2/3" />
+              </div>
+              <div className="animate-pulse bg-gray-50 rounded-lg p-4 shadow-sm">
+                <div className="h-6 bg-gray-200 rounded w-1/4 mb-3" />
+                <div className="h-4 bg-gray-200 rounded w-2/3 mb-2" />
+                <div className="h-4 bg-gray-200 rounded w-1/2" />
+              </div>
+              <div className="animate-pulse bg-gray-50 rounded-lg p-4 shadow-sm">
+                <div className="h-6 bg-gray-200 rounded w-1/5 mb-3" />
+                <div className="h-4 bg-gray-200 rounded w-3/5 mb-2" />
+                <div className="h-4 bg-gray-200 rounded w-2/5" />
+              </div>
+            </div>
           </div>
         ) : (
           <div className="space-y-6">

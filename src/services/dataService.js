@@ -86,7 +86,46 @@ export class DataService {
       // If server returned HTML (likely index.html due to SPA fallback), treat as missing file
       if (contentType && contentType.includes('text/html')) {
         console.error(`Expected JSON but received HTML for ${filePath} - treating as missing`)
-        // Attempt to trigger live fetch via Netlify function and return that result to the UI.
+
+        // Prefer calling the Railway backend directly when configured. This avoids Netlify
+        // function timeouts in branch previews and removes the proxy from the critical path.
+        const railwayUrl = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_RAILWAY_URL) || (typeof window !== 'undefined' && window.RAILWAY_URL)
+
+        if (railwayUrl) {
+          try {
+            console.log(`Attempting direct Railway fetch for rider ${riderId} at ${railwayUrl}`)
+            const url = `${railwayUrl.replace(/\/$/, '')}/fetch-rider/${encodeURIComponent(riderId)}?force_refresh=true`
+            const r = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } })
+            if (!r.ok) {
+              console.error(`Railway returned ${r.status} for rider ${riderId}`)
+              throw new Error(`Railway fetch failed: ${r.status}`)
+            }
+            const payload = await r.json()
+
+            // payload may contain top-level `profile` or `result.profile`.
+            if (payload && payload.profile) {
+              this.cache.set(fileKey, payload.profile)
+              return payload.profile
+            }
+            if (payload && payload.result && typeof payload.result === 'object' && payload.result.profile) {
+              this.cache.set(fileKey, payload.result.profile)
+              return payload.result.profile
+            }
+            // If Railway returned a mapping of files under `result.files` (rare), use it.
+            if (payload && payload.result && payload.result.files && payload.result.files[fileName + '.json']) {
+              const parsed = payload.result.files[fileName + '.json']
+              this.cache.set(fileKey, parsed)
+              return parsed
+            }
+
+            throw new Error('Railway returned unexpected payload shape')
+          } catch (err) {
+            console.error(`Direct Railway fetch failed for rider ${riderId}:`, err)
+            // Fall through to Netlify function fallback below
+          }
+        }
+
+        // Fallback: Attempt to trigger live fetch via Netlify function and return that result to the UI.
         try {
           console.log(`Attempting live fetch via Netlify function for rider ${riderId}`)
           const funcResp = await fetch('/.netlify/functions/fetch-rider', {
@@ -101,29 +140,27 @@ export class DataService {
           }
 
           const payload = await funcResp.json()
-          // Netlify function wraps data in { success, result } or { success, fallback, profile }
-          if (payload.success && payload.result) {
-            // Some endpoints return the full file set inside payload.result; try to extract requested file
-            const result = payload.result
-            // If the function returned the profile directly
-            if (result.profile) {
-              this.cache.set(fileKey, result.profile)
-              return result.profile
-            }
-            // If the function returned a map of files
-            if (result.files && result.files[fileName + '.json']) {
-              const parsed = result.files[fileName + '.json']
-              this.cache.set(fileKey, parsed)
-              return parsed
-            }
-            // As a fallback, return payload.result.profile if present
-            if (result.profile) {
-              this.cache.set(fileKey, result.profile)
-              return result.profile
-            }
+
+          // Prefer top-level profile
+          if (payload && payload.profile) {
+            this.cache.set(fileKey, payload.profile)
+            return payload.profile
           }
 
-          if (payload.success && payload.fallback && payload.profile && fileName === 'profile') {
+          // Then look under result.profile
+          if (payload && payload.result && typeof payload.result === 'object' && payload.result.profile) {
+            this.cache.set(fileKey, payload.result.profile)
+            return payload.result.profile
+          }
+
+          // If the function returned a map of files under result.files
+          if (payload && payload.result && payload.result.files && payload.result.files[fileName + '.json']) {
+            const parsed = payload.result.files[fileName + '.json']
+            this.cache.set(fileKey, parsed)
+            return parsed
+          }
+
+          if (payload && payload.success && payload.fallback && payload.profile && fileName === 'profile') {
             this.cache.set(fileKey, payload.profile)
             return payload.profile
           }
