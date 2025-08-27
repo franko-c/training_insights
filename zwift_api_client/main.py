@@ -8,6 +8,7 @@ from typing import Optional
 import requests
 import json
 from pathlib import Path
+from datetime import datetime, timezone
 
 # Add the current directory to Python path so imports work
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -68,6 +69,30 @@ def dispatch_github_workflow(rider_id: str) -> None:
         logger.exception(f"Error dispatching GitHub workflow for rider {rider_id}: {e}")
         return {"error": str(e)}
 
+
+def fetch_raw_profile_from_repo(rider_id: str, repo: str, branch: str, token: Optional[str] = None, timeout: int = 6):
+    """Try to fetch the persisted profile.json from the repository's raw URL.
+
+    Returns parsed JSON on success or None.
+    """
+    if not repo or not branch:
+        return None
+    raw = f"https://raw.githubusercontent.com/{repo}/{branch}/public/data/riders/{rider_id}/profile.json"
+    headers = {}
+    if token:
+        headers["Authorization"] = f"token {token}"
+    try:
+        r = requests.get(raw, headers=headers, timeout=timeout)
+        if r.status_code == 200:
+            try:
+                return r.json()
+            except Exception:
+                # fallthrough to return None on parse error
+                return None
+    except Exception:
+        return None
+    return None
+
 class RiderRequest(BaseModel):
     rider_id: str
     force_refresh: Optional[bool] = False
@@ -87,13 +112,56 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False, backgroun
     This replaces ALL Python script calls from Netlify functions
     """
     try:
+
         logger.info(f"Processing rider {rider_id}, force_refresh={force_refresh}")
 
-        # Create CLI instance
-        cli = DataManagerCLI()
+        # Try dynamic-first fast-path: if a persisted file exists in the repo and is
+        # younger than the TTL, return it immediately. Otherwise run the scraper.
+        PERSIST_TTL = int(os.getenv("PERSIST_TTL_SECONDS", "86400"))
+        repo_env = os.getenv("GITHUB_REPO", "")
+        branch_env = os.getenv("GITHUB_BRANCH", "master")
+        token_env = os.getenv("GITHUB_PAT") or os.getenv("GITHUB_TOKEN")
 
-        # For both new fetches and explicit refreshes we want the freshest data.
-        # Treat incoming requests as force_refresh to ensure landing page pulls fresh data.
+        raw_profile = None
+        try:
+            if not force_refresh and repo_env:
+                raw_profile = fetch_raw_profile_from_repo(rider_id, repo_env, branch_env, token=token_env)
+                if raw_profile and isinstance(raw_profile, dict):
+                    # parse extraction_date if present
+                    dt_str = raw_profile.get("extraction_date")
+                    if dt_str:
+                        try:
+                            dt = datetime.fromisoformat(dt_str)
+                            # ensure timezone-aware
+                            if dt.tzinfo is None:
+                                dt = dt.replace(tzinfo=timezone.utc)
+                            age = (datetime.now(timezone.utc) - dt).total_seconds()
+                            if age <= PERSIST_TTL:
+                                logger.info(f"Returning repo-cached profile for {rider_id}, age={age}s")
+                                github_env = {
+                                    "GITHUB_PAT_set": bool(os.getenv("GITHUB_PAT")),
+                                    "GITHUB_REPO_set": bool(os.getenv("GITHUB_REPO")),
+                                    "GITHUB_BRANCH": os.getenv("GITHUB_BRANCH"),
+                                    "GITHUB_WORKFLOW_FILE": os.getenv("GITHUB_WORKFLOW_FILE"),
+                                }
+                                return {
+                                    "success": True,
+                                    "rider_id": rider_id,
+                                    "from": "repo_cache",
+                                    "age_seconds": age,
+                                    "profile": raw_profile,
+                                    "files": ["profile.json"],
+                                    "github_env": github_env,
+                                }
+                        except Exception:
+                            # if parsing fails, ignore and fall through to scrape
+                            raw_profile = None
+
+        except Exception:
+            raw_profile = None
+
+        # Create CLI instance and run scraper for fresh data
+        cli = DataManagerCLI()
         result = cli.refresh_rider(rider_id, force=True)
 
         logger.info(f"Successfully processed rider {rider_id}")
