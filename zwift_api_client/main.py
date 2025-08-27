@@ -9,6 +9,7 @@ import requests
 import json
 from pathlib import Path
 from datetime import datetime, timezone
+import ast
 
 # Add the current directory to Python path so imports work
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -200,11 +201,37 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False, backgroun
             "GITHUB_WORKFLOW_FILE": os.getenv("GITHUB_WORKFLOW_FILE"),
         }
 
+        # Ensure `result` is JSON-serializable. The CLI may return a Python dict
+        # or a Python object whose str() representation looks like a Python dict
+        # (single quotes). Normalize common shapes into a JSON-ready dict.
+        result_obj = None
+        try:
+            if isinstance(result, dict):
+                result_obj = result
+            elif isinstance(result, str):
+                # Try JSON first (best-case)
+                try:
+                    result_obj = json.loads(result)
+                except Exception:
+                    # Fallback: convert Python-literal string to Python dict then use it
+                    try:
+                        result_obj = ast.literal_eval(result)
+                    except Exception:
+                        result_obj = {"raw": result}
+            else:
+                # Try to coerce generic objects via their __dict__ if available
+                if hasattr(result, "__dict__"):
+                    result_obj = getattr(result, "__dict__")
+                else:
+                    result_obj = {"raw": str(result)}
+        except Exception:
+            result_obj = {"raw": str(result)}
+
         return {
             "success": True,
             "rider_id": rider_id,
             "force_refresh": True,
-            "result": str(result),
+            "result": result_obj,
             "message": f"Rider {rider_id} data refreshed successfully",
             "files": files,
             "profile": profile,
