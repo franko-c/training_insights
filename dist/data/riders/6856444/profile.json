@@ -1,0 +1,23 @@
+{
+  "rider_id": "6856444",
+  "extraction_date": "2025-08-27T22:44:05.777477",
+  "name": "George Ceniviva",
+  "athlete_id": "143581478",
+  "zwift_id": "6856444",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/2e6f4708-3108093",
+  "team": "GTR",
+  "team_id": "19667",
+  "category": "A+",
+  "weight": 71.0,
+  "ftp": 337,
+  "wkg": 4.75,
+  "zwift_racing_score": 551.0,
+  "strava_url": "https://www.strava.com/athletes/143581478",
+  "power_summary": {
+    "15s": 545,
+    "1min": 442,
+    "5min": 362,
+    "20min": 353
+  }
+}
