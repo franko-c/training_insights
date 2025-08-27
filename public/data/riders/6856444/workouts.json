@@ -1,0 +1,8 @@
+{
+  "extraction_date": "2025-08-27T22:43:19.549937",
+  "total_workouts": 0,
+  "latest_workout_date": null,
+  "workouts": [],
+  "source": "profile_results_api",
+  "note": "Structured training workouts only - optimized for training analysis"
+}
