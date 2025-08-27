@@ -79,10 +79,62 @@ export class DataService {
       // Check content type
       const contentType = response.headers.get('content-type')
       console.log(`Content-Type for ${filePath}: ${contentType}`)
-      
+
       const text = await response.text()
       console.log(`Response text preview for ${filePath}:`, text.substring(0, 100))
-      
+
+      // If server returned HTML (likely index.html due to SPA fallback), treat as missing file
+      if (contentType && contentType.includes('text/html')) {
+        console.error(`Expected JSON but received HTML for ${filePath} - treating as missing`)
+        // Attempt to trigger live fetch via Netlify function and return that result to the UI.
+        try {
+          console.log(`Attempting live fetch via Netlify function for rider ${riderId}`)
+          const funcResp = await fetch('/.netlify/functions/fetch-rider', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ riderId: String(riderId), force_refresh: true })
+          })
+
+          if (!funcResp.ok) {
+            console.error(`Netlify function returned ${funcResp.status} when fetching rider ${riderId}`)
+            throw new Error(`Missing JSON file ${filePath} and live fetch failed (${funcResp.status})`)
+          }
+
+          const payload = await funcResp.json()
+          // Netlify function wraps data in { success, result } or { success, fallback, profile }
+          if (payload.success && payload.result) {
+            // Some endpoints return the full file set inside payload.result; try to extract requested file
+            const result = payload.result
+            // If the function returned the profile directly
+            if (result.profile) {
+              this.cache.set(fileKey, result.profile)
+              return result.profile
+            }
+            // If the function returned a map of files
+            if (result.files && result.files[fileName + '.json']) {
+              const parsed = result.files[fileName + '.json']
+              this.cache.set(fileKey, parsed)
+              return parsed
+            }
+            // As a fallback, return payload.result.profile if present
+            if (result.profile) {
+              this.cache.set(fileKey, result.profile)
+              return result.profile
+            }
+          }
+
+          if (payload.success && payload.fallback && payload.profile && fileName === 'profile') {
+            this.cache.set(fileKey, payload.profile)
+            return payload.profile
+          }
+
+          throw new Error(`Live fetch returned unexpected payload: ${JSON.stringify(payload).substring(0,200)}`)
+        } catch (err) {
+          console.error(`Live fetch attempt failed for rider ${riderId}:`, err)
+          throw err
+        }
+      }
+
       const data = JSON.parse(text)
       this.cache.set(fileKey, data)
       return data
