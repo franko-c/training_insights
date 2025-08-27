@@ -15,10 +15,32 @@ function App() {
     setLoading(true)
     setError(null)
 
-    // If the caller passed a preloaded result object (from a live fetch), use it directly
-    if (riderOrResult && typeof riderOrResult === 'object' && riderOrResult.riderId) {
-      setCurrentRiderId(String(riderOrResult.riderId))
-      setRiderData(riderOrResult)
+    // If the caller passed a preloaded result object (from a live fetch), accept
+    // several possible shapes rather than requiring a specific `riderId` field.
+    if (riderOrResult && typeof riderOrResult === 'object') {
+      // Try to extract riderId from common locations
+      const possibleId = (
+        riderOrResult.riderId ||
+        riderOrResult.rider_id ||
+        (riderOrResult.profile && (riderOrResult.profile.rider_id || riderOrResult.profile.id)) ||
+        (riderOrResult.result && (riderOrResult.result.riderId || riderOrResult.result.rider_id))
+      )
+
+      if (possibleId) {
+        const id = String(possibleId)
+        setCurrentRiderId(id)
+        // Normalize a minimal riderData object if the payload includes `profile` or `result`.
+        // Prefer top-level profile, then result.profile, else pass the object as-is.
+        const normalized = riderOrResult.profile || riderOrResult.result?.profile || riderOrResult
+        setRiderData(normalized)
+        setLoading(false)
+        return
+      }
+
+      // If it's an object but we couldn't find an id, avoid coercing it to a string
+      // (which becomes "[object Object]") and instead surface an error so the
+      // caller can adjust the payload shape.
+      setError('Received unexpected live data shape (missing rider id)')
       setLoading(false)
       return
     }
