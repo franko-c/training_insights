@@ -1,0 +1,23 @@
+{
+  "rider_id": "6724753",
+  "extraction_date": "2025-08-27T14:46:24.221587",
+  "name": "Bart Zwarteveen",
+  "athlete_id": "0",
+  "zwift_id": "6724753",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/3c991224-3125083",
+  "team": "GTR",
+  "team_id": "19667",
+  "category": "B",
+  "weight": 86.0,
+  "ftp": 273,
+  "wkg": 3.17,
+  "zwift_racing_score": 552.0,
+  "strava_url": "https://www.strava.com/athletes/0",
+  "power_summary": {
+    "15s": 971,
+    "1min": 615,
+    "5min": 385,
+    "20min": 298
+  }
+}
