@@ -11,9 +11,19 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  const handleRiderSelected = async (riderId) => {
+  const handleRiderSelected = async (riderOrResult) => {
     setLoading(true)
     setError(null)
+
+    // If the caller passed a preloaded result object (from a live fetch), use it directly
+    if (riderOrResult && typeof riderOrResult === 'object' && riderOrResult.riderId) {
+      setCurrentRiderId(String(riderOrResult.riderId))
+      setRiderData(riderOrResult)
+      setLoading(false)
+      return
+    }
+
+    const riderId = String(riderOrResult)
     setCurrentRiderId(riderId)
 
     try {
