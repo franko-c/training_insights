@@ -10,6 +10,8 @@ const LandingPage = ({ onRiderSelected }) => {
   const [progress, setProgress] = useState('')
   const [askLiveRefresh, setAskLiveRefresh] = useState(false)
   const [pendingRiderId, setPendingRiderId] = useState(null)
+  const [spinnerSteps, setSpinnerSteps] = useState([])
+  const [spinnerPercent, setSpinnerPercent] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -24,6 +26,8 @@ const LandingPage = ({ onRiderSelected }) => {
     const cleanedRiderId = validation.riderId
     setLoading(true)
     setProgress('Checking for cached data...')
+  setSpinnerSteps([])
+  setSpinnerPercent(null)
 
     try {
       const found = await riderDataFetcher.hasRiderData(cleanedRiderId)
@@ -49,16 +53,21 @@ const LandingPage = ({ onRiderSelected }) => {
     setAskLiveRefresh(false)
     setLoading(true)
     setProgress('Starting live fetch — this may take ~10-30s')
-    let spinnerSteps = []
-    let spinnerPercent = null
+    setSpinnerSteps([])
+    setSpinnerPercent(null)
 
     riderDataFetcher.onProgress = (p) => {
       if (!p) return
       // p can be { step, message, percent }
       if (p.message) setProgress(p.message)
-      if (p.percent !== undefined) spinnerPercent = p.percent
-      if (p.step) {
-        spinnerSteps = spinnerSteps.concat([{ title: p.message || p.step, detail: p.detail }])
+      if (p.percent !== undefined && p.percent !== null) setSpinnerPercent(p.percent)
+      if (p.step || p.message) {
+        setSpinnerSteps((prev) => {
+          // Avoid repeating the same step message consecutively
+          const title = p.message || p.step
+          if (prev.length && prev[prev.length - 1].title === title) return prev
+          return prev.concat([{ title, detail: p.detail }])
+        })
       }
     }
 
@@ -78,10 +87,14 @@ const LandingPage = ({ onRiderSelected }) => {
       setError(err.message || 'Live fetch failed')
     } finally {
       riderDataFetcher.onProgress = null
-      // show final state briefly
-      setLoading(false)
-      setProgress('')
-      setPendingRiderId(null)
+      // show final state briefly then clear spinner state
+      setTimeout(() => {
+        setLoading(false)
+        setProgress('')
+        setPendingRiderId(null)
+        setSpinnerSteps([])
+        setSpinnerPercent(null)
+      }, 600)
     }
   }
 
@@ -99,7 +112,7 @@ const LandingPage = ({ onRiderSelected }) => {
         {loading ? (
           <div className="space-y-6">
             <div className="text-center py-4">
-              <LoadingSpinner message={progress || 'Working...'} size="large" steps={[]} percent={null} />
+              <LoadingSpinner message={progress || 'Working...'} size="large" overlay={true} steps={spinnerSteps} percent={spinnerPercent} />
             </div>
 
             <div className="grid grid-cols-1 gap-4">
