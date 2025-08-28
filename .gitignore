@@ -1,2 +1,15 @@
 # Local Netlify folder
 .netlify
+# Build output
+dist/
+
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+
+# Zwift client session files
+zwift_api_client/auth/.sessions/
+
+# Local env and secrets
+.env
+.venv/
