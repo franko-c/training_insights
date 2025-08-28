@@ -1,0 +1,23 @@
+{
+  "rider_id": "933084",
+  "extraction_date": "2025-08-28T02:07:30.131200",
+  "name": "JF Grue",
+  "athlete_id": "4934286",
+  "zwift_id": "933084",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/eb2fa19e-485419",
+  "team": "Vikings",
+  "team_id": "90",
+  "category": "A+",
+  "weight": 65.1,
+  "ftp": 356,
+  "wkg": 5.47,
+  "zwift_racing_score": 846.0,
+  "strava_url": "https://www.strava.com/athletes/4934286",
+  "power_summary": {
+    "15s": 704,
+    "1min": 556,
+    "5min": 397,
+    "20min": 370
+  }
+}
