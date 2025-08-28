@@ -133,11 +133,42 @@ export class DataService {
         data = JSON.parse(text)
       } catch (parseErr) {
         // If the response looks like HTML, treat it as the SPA fallback and consider the file missing.
-        const looksLikeHtml = /<\/?html|<!doctype/i.test(text)
-        if (looksLikeHtml) {
-          console.warn(`Received HTML fallback for ${filePath}; treating as missing persisted file`)
-          return null
-        }
+          const looksLikeHtml = /<\/?html|<!doctype/i.test(text)
+          if (looksLikeHtml) {
+            console.warn(`Received HTML fallback for ${filePath}; treating as missing persisted file`)
+
+            // Try a safe backend fallback once: ask the Netlify function to provide the live payload
+            // without forcing a refresh. This helps in cases where the static file isn't published yet
+            // but the backend can return the generated payload directly.
+            try {
+              if (typeof window !== 'undefined') {
+                console.log(`Attempting backend fallback for rider ${riderId}`)
+                const resp = await fetch('/api/fetch-rider', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ riderId: riderId, force_refresh: false })
+                })
+                if (resp && resp.ok) {
+                  const json = await resp.json()
+                  // hydrate cache if payload present
+                  if (json) {
+                    try {
+                      this.hydrateFromLiveResult(json)
+                    } catch (e) { /* ignore hydration failures */ }
+
+                    // If hydration populated the requested file, return it
+                    if (this.cache.has(fileKey)) {
+                      return this.cache.get(fileKey)
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              console.warn('Backend fallback failed or not available', e)
+            }
+
+            return null
+          }
 
         // If content-type explicitly indicates JSON but parsing failed, log and treat as missing
         if (contentType && contentType.includes('application/json')) {
