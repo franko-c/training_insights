@@ -1,6 +1,0 @@
-/api/* /.netlify/functions/:splat 200
-/* /index.html 200
-
-# If a data file is missing, return a real 404 rather than rewriting to index.html
-# This prevents the SPA catch-all from serving index.html (text/html) for missing JSON files.
-/data/* /404.html 404
