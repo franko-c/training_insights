@@ -188,6 +188,66 @@ export class DataService {
     }
   }
 
+  // Hydrate the in-memory cache from a live fetch result object returned by the backend.
+  // This avoids needing persisted /data files immediately after a live scrape.
+  hydrateFromLiveResult(result) {
+    try {
+      if (!result || typeof result !== 'object') return
+
+      // result may be top-level profile, or { result: { profile, files } }, or { profile, files }
+      const payload = result.result || result
+
+      const profile = payload.profile || payload.profile_json || payload.profile_data || null
+      const files = payload.files || payload.files_json || payload.data || {}
+
+      // Attempt to extract rider id
+      const riderId = String(payload.riderId || payload.rider_id || (profile && (profile.rider_id || profile.id)))
+      if (!riderId || riderId === 'undefined' || riderId === 'null') return
+
+      // Normalize rider object
+      const normalizedProfile = profile || {}
+
+      // Build combined rider data similar to loadRiderData
+      const combined = {
+        rider_id: riderId,
+        ...normalizedProfile,
+        power: files.power || payload.power || {},
+        events: {
+          races: files.races || payload.races || { count: 0, events: [] },
+          group_rides: files.group_rides || payload.group_rides || { count: 0, events: [] },
+          workouts: files.workouts || payload.workouts || { count: 0, events: [] },
+          summary: files.events_summary || payload.events_summary || {}
+        },
+        intervals: (files.power && files.power.intervals) || (payload.power && payload.power.intervals) || [],
+        ftp: (files.power && files.power.ftp) || (payload.power && payload.power.ftp) || normalizedProfile?.ftp || 0
+      }
+
+      // Populate top-level cache for rider
+      const cacheKey = `rider-${riderId}`
+      this.cache.set(cacheKey, combined)
+
+      // Also populate per-file cache keys so loadRiderFile/loadEventData will pick them up
+      const fileNames = ['profile', 'power', 'races', 'group_rides', 'workouts', 'events_summary']
+      fileNames.forEach((fname) => {
+        const fileKey = `file-${riderId}-${fname}`
+        // prefer files[fname], then payload[fname], or derive
+        let content = null
+        if (files && files[fname]) content = files[fname]
+        else if (payload[fname]) content = payload[fname]
+        else if (fname === 'profile') content = normalizedProfile
+        else if (fname === 'events_summary' && payload.events_summary) content = payload.events_summary
+
+        if (content !== null) {
+          this.cache.set(fileKey, content)
+        }
+      })
+
+      console.log(`💧 Hydrated cache for rider ${riderId} from live result`)
+    } catch (e) {
+      console.warn('Could not hydrate cache from live result:', e)
+    }
+  }
+
   // Clear cache
   clearCache() {
     this.cache.clear()
