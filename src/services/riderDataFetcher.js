@@ -92,12 +92,24 @@ export class RiderDataFetcher {
   async refreshRiderData(riderId) {
     try {
   // Try Railway API first and explicitly request a forced refresh
-  if (this.onProgress) this.onProgress({ step: 'start', message: 'Requesting live refresh' })
+  if (this.onProgress) this.onProgress({ step: 'start', message: 'Requesting live refresh', percent: 5 })
+  if (this.onProgress) this.onProgress({ step: 'contacting_railway', message: 'Contacting backend service', percent: 10 })
   const response = await fetch(`${this.railwayApiBase}/fetch-rider/${riderId}?force_refresh=true`)
       if (response.ok) {
+        if (this.onProgress) this.onProgress({ step: 'railway_received', message: 'Railway acknowledged request', percent: 30 })
         const result = await response.json()
-        if (this.onProgress) this.onProgress({ step: 'done', message: 'Live refresh complete' })
+        // Simulate scraping progress if result includes a `progress` field
+        if (result && result.progress && this.onProgress) {
+          // result.progress may be an array of { step, percent }
+          try {
+            for (const p of result.progress) {
+              this.onProgress({ step: p.step || 'railway', message: p.message || p.step, percent: p.percent })
+            }
+          } catch (e) { /* ignore */ }
+        }
+        if (this.onProgress) this.onProgress({ step: 'railway_completed', message: 'Railway returned data', percent: 80 })
         if (result.success !== false) {
+          if (this.onProgress) this.onProgress({ step: 'done', message: 'Live refresh complete', percent: 100 })
           return result
         }
         throw new Error(result.error || 'Railway refresh failed')
@@ -115,7 +127,9 @@ export class RiderDataFetcher {
       })
       if (netlifyResponse.ok) {
         const result = await netlifyResponse.json()
+        if (this.onProgress) this.onProgress({ step: 'netlify', message: 'Netlify function returned data', percent: 90 })
         if (result.success) {
+          if (this.onProgress) this.onProgress({ step: 'done', message: 'Live refresh complete', percent: 100 })
           return result
         }
         throw new Error(result.error || 'Netlify refresh failed')

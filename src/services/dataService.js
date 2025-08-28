@@ -238,7 +238,29 @@ export class DataService {
         else if (fname === 'events_summary' && payload.events_summary) content = payload.events_summary
 
         if (content !== null) {
-          this.cache.set(fileKey, content)
+          // Normalize event file shapes so loadEventData can consume them.
+          if (fname === 'races') {
+            // content might be an array of races or an object
+            if (Array.isArray(content)) {
+              this.cache.set(fileKey, { races: content, total_races: content.length })
+            } else {
+              this.cache.set(fileKey, content)
+            }
+          } else if (fname === 'group_rides') {
+            if (Array.isArray(content)) {
+              this.cache.set(fileKey, { group_rides: content, total_group_rides: content.length })
+            } else {
+              this.cache.set(fileKey, content)
+            }
+          } else if (fname === 'workouts') {
+            if (Array.isArray(content)) {
+              this.cache.set(fileKey, { workouts: content, total_workouts: content.length })
+            } else {
+              this.cache.set(fileKey, content)
+            }
+          } else {
+            this.cache.set(fileKey, content)
+          }
         }
       })
 
@@ -246,6 +268,30 @@ export class DataService {
     } catch (e) {
       console.warn('Could not hydrate cache from live result:', e)
     }
+  }
+
+  // Poll the CDN/public /data path until persisted files appear or attempts exhausted.
+  async pollForPersistedData(riderId, intervalMs = 5000, attempts = 12) {
+    const profilePath = `/data/riders/${riderId}/profile.json`
+    for (let i = 0; i < attempts; i++) {
+      try {
+        const resp = await fetch(profilePath, { method: 'GET' })
+        if (resp.ok) {
+          const ct = resp.headers.get('content-type') || ''
+          if (ct.includes('application/json')) {
+            console.log(`✅ Persisted data available for rider ${riderId} after ${i} attempts`)
+            // Refresh in-memory cache from persisted files
+            try {
+              await this.loadRiderData(riderId)
+            } catch (e) { /* ignore */ }
+            return true
+          }
+        }
+      } catch (e) { /* ignore */ }
+      await new Promise((r) => setTimeout(r, intervalMs))
+    }
+    console.log(`⏱️ Persisted data not found for rider ${riderId} after polling`)
+    return false
   }
 
   // Clear cache

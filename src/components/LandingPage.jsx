@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import LoadingSpinner from './LoadingSpinner'
 import { riderDataFetcher } from '../services/riderDataFetcher'
+import { dataService } from '../services/dataService'
 
 const LandingPage = ({ onRiderSelected }) => {
   const [riderId, setRiderId] = useState('')
@@ -48,15 +49,24 @@ const LandingPage = ({ onRiderSelected }) => {
     setAskLiveRefresh(false)
     setLoading(true)
     setProgress('Starting live fetch — this may take ~10-30s')
+    let spinnerSteps = []
+    let spinnerPercent = null
 
     riderDataFetcher.onProgress = (p) => {
       if (!p) return
+      // p can be { step, message, percent }
       if (p.message) setProgress(p.message)
+      if (p.percent !== undefined) spinnerPercent = p.percent
+      if (p.step) {
+        spinnerSteps = spinnerSteps.concat([{ title: p.message || p.step, detail: p.detail }])
+      }
     }
 
     try {
       const result = await riderDataFetcher.refreshRiderData(pendingRiderId)
       setProgress('Live fetch complete — opening dashboard')
+      // start background poll to detect when persisted files appear
+      try { dataService.pollForPersistedData(pendingRiderId, 5000, 12) } catch (e) { /* ignore */ }
       // If the fetch returned structured data, pass it through to the app so
       // the app can use it immediately (avoids relying on persisted /data files)
       if (result && typeof result === 'object') {
@@ -68,6 +78,7 @@ const LandingPage = ({ onRiderSelected }) => {
       setError(err.message || 'Live fetch failed')
     } finally {
       riderDataFetcher.onProgress = null
+      // show final state briefly
       setLoading(false)
       setProgress('')
       setPendingRiderId(null)
@@ -88,7 +99,7 @@ const LandingPage = ({ onRiderSelected }) => {
         {loading ? (
           <div className="space-y-6">
             <div className="text-center py-4">
-              <LoadingSpinner message={progress || 'Working...'} size="large" steps={[progress]} />
+              <LoadingSpinner message={progress || 'Working...'} size="large" steps={[]} percent={null} />
             </div>
 
             <div className="grid grid-cols-1 gap-4">
