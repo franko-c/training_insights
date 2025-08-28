@@ -1,0 +1,23 @@
+{
+  "extraction_date": "2025-08-28T19:54:11.223398",
+  "total_events": 1645,
+  "summary": {
+    "races": {
+      "count": 1485,
+      "latest_date": "2025-08-27",
+      "file": "races.json"
+    },
+    "group_rides": {
+      "count": 156,
+      "latest_date": "2025-02-17",
+      "file": "group_rides.json"
+    },
+    "workouts": {
+      "count": 4,
+      "latest_date": "2019-04-17",
+      "file": "workouts.json"
+    }
+  },
+  "source": "profile_results_api_separated",
+  "note": "Quick overview - load specific event type files for detailed data"
+}
