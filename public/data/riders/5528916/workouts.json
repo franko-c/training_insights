@@ -1,5 +1,5 @@
 {
-  "extraction_date": "2025-08-23T14:48:44.259609",
+  "extraction_date": "2025-08-28T10:57:42.374114",
   "total_workouts": 6,
   "latest_workout_date": "2025-05-26",
   "workouts": [
@@ -50,7 +50,7 @@
     },
     {
       "event_title": "Fran Cardona",
-      "event_date": "2025-04-28",
+      "event_date": "2025-04-27",
       "event_timestamp": 1745794800,
       "position": 5,
       "position_in_category": 0,
