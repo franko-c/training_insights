@@ -31,8 +31,11 @@ function App() {
         setCurrentRiderId(id)
         // Normalize a minimal riderData object if the payload includes `profile` or `result`.
         // Prefer top-level profile, then result.profile, else pass the object as-is.
-        const normalized = riderOrResult.profile || riderOrResult.result?.profile || riderOrResult
-        setRiderData(normalized)
+  const normalized = riderOrResult.profile || riderOrResult.result?.profile || riderOrResult
+  // Hydrate the dataService cache from the live result so per-file
+  // lookups succeed (avoids reading /data files immediately).
+  try { dataService.hydrateFromLiveResult(riderOrResult) } catch (e) { /* ignore */ }
+  setRiderData(normalized)
         setLoading(false)
         return
       }
