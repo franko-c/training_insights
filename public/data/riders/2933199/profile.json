@@ -1,0 +1,23 @@
+{
+  "rider_id": "2933199",
+  "extraction_date": "2025-08-28T22:03:48.271723",
+  "name": "Alison Kerr",
+  "athlete_id": "69431590",
+  "zwift_id": "2933199",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/4324344c-1570712",
+  "team": "ZRScot",
+  "team_id": "2934",
+  "category": "B",
+  "weight": 51.9,
+  "ftp": 202,
+  "wkg": 3.89,
+  "zwift_racing_score": 591.0,
+  "strava_url": "https://www.strava.com/athletes/69431590",
+  "power_summary": {
+    "15s": 447,
+    "1min": 346,
+    "5min": 241,
+    "20min": 214
+  }
+}
