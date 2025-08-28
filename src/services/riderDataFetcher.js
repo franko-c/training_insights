@@ -38,8 +38,14 @@ export class RiderDataFetcher {
         }
       }
 
-      // Unknown content-type: be conservative and treat as missing
-      return false
+      // Unknown content-type: attempt to parse as JSON (GitHub raw often returns text/plain)
+      try {
+        const text = await response.text()
+        JSON.parse(text)
+        return true
+      } catch (e) {
+        return false
+      }
     } catch (error) {
       return false
     }
