@@ -1,0 +1,23 @@
+{
+  "rider_id": "3201227",
+  "extraction_date": "2025-08-28T17:30:42.593918",
+  "name": "Nj\u00e5l Pedersen",
+  "athlete_id": "0",
+  "zwift_id": "3201227",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/7e02a88f-1885349",
+  "team": "Team RWB",
+  "team_id": "3369",
+  "category": "A+",
+  "weight": 68.5,
+  "ftp": 390,
+  "wkg": 5.69,
+  "zwift_racing_score": 992.0,
+  "strava_url": "https://www.strava.com/athletes/0",
+  "power_summary": {
+    "15s": 993,
+    "1min": 658,
+    "5min": 425,
+    "20min": 397
+  }
+}
