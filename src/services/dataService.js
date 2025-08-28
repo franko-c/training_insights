@@ -207,6 +207,40 @@ export class DataService {
         console.log(`📂 No persisted ${eventType} file for rider ${riderId}`)
         return { count: 0, events: [] }
       }
+      // Normalization: accept several common persisted file shapes.
+      // 1) Top-level array (e.g. [ { ... }, ... ]) -> normalize into { <eventKey>: [...], total_<eventKey>: N }
+      // 2) { events: [...] } -> treat events as the array for the specific event type
+      // 3) If the persisted file uses a different pluralization, attempt to coerce it.
+      try {
+        if (Array.isArray(data)) {
+          if (eventType === 'races') {
+            data = { races: data, total_races: data.length }
+          } else if (eventType === 'group_rides') {
+            data = { group_rides: data, total_group_rides: data.length }
+          } else if (eventType === 'workouts') {
+            data = { workouts: data, total_workouts: data.length }
+          }
+        } else if (data && typeof data === 'object') {
+          // If it's an object with a generic `events` array, map it to the specific event key
+          if (Array.isArray(data.events)) {
+            if (eventType === 'races') data = { races: data.events, total_races: data.events.length }
+            if (eventType === 'group_rides') data = { group_rides: data.events, total_group_rides: data.events.length }
+            if (eventType === 'workouts') data = { workouts: data.events, total_workouts: data.events.length }
+          }
+          // If the object contains a top-level array under unexpected key names, try to detect them
+          const altKeys = ['items', 'rows', 'results', 'data']
+          for (const k of altKeys) {
+            if (Array.isArray(data[k])) {
+              if (eventType === 'races') data = { races: data[k], total_races: data[k].length }
+              if (eventType === 'group_rides') data = { group_rides: data[k], total_group_rides: data[k].length }
+              if (eventType === 'workouts') data = { workouts: data[k], total_workouts: data[k].length }
+              break
+            }
+          }
+        }
+      } catch (normErr) {
+        console.warn('Event data normalization failed, proceeding with raw data shape', normErr)
+      }
       try {
         const rawKeys = (data && typeof data === 'object') ? Object.keys(data) : null
         console.log(`📂 Raw file data for ${eventType}:`, rawKeys === null ? `non-object(${typeof data})` : rawKeys)
@@ -458,28 +492,55 @@ export class DataService {
   }
 
   // Poll the CDN/public /data path until persisted files appear or attempts exhausted.
-  async pollForPersistedData(riderId, intervalMs = 5000, attempts = 12) {
-    const profilePath = `/data/riders/${riderId}/profile.json`
-    for (let i = 0; i < attempts; i++) {
+  // Poll until a set of critical files exists. Uses exponential backoff by default.
+  async pollForMultiplePersistedFiles(riderId, files = ['profile.json','events_summary.json','races.json'],
+    initialIntervalMs = 3000, maxAttempts = 8) {
+    const targetBase = `/data/riders/${riderId}`
+    let attempt = 0
+    let interval = initialIntervalMs
+
+    const checkOnce = async () => {
       try {
-        const resp = await fetch(profilePath, { method: 'GET' })
-        if (resp.ok) {
-          const ct = resp.headers.get('content-type') || ''
-          // Accept application/json or text/plain (GitHub raw returns text/plain but contains JSON)
-          if (ct.includes('application/json') || ct.includes('text/plain')) {
-            console.log(`✅ Persisted data available for rider ${riderId} after ${i} attempts (content-type=${ct})`)
-            // Refresh in-memory cache from persisted files
-            try {
-              await this.loadRiderData(riderId)
-            } catch (e) { /* ignore */ }
-            return true
+        // HEAD each file to minimize bandwidth
+        for (const f of files) {
+          const url = `${targetBase}/${f}`
+          try {
+            const resp = await fetch(url, { method: 'HEAD' })
+            if (!resp.ok) return false
+            const ct = (resp.headers.get('content-type') || '')
+            // Accept application/json or text/plain (GitHub raw returns text/plain but contains JSON)
+            if (!(ct.includes('application/json') || ct.includes('text/plain'))) return false
+          } catch (e) {
+            return false
           }
         }
-      } catch (e) { /* ignore */ }
-      await new Promise((r) => setTimeout(r, intervalMs))
+        return true
+      } catch (e) {
+        return false
+      }
     }
-    console.log(`⏱️ Persisted data not found for rider ${riderId} after polling`)
+
+    while (attempt < maxAttempts) {
+      const ok = await checkOnce()
+      if (ok) {
+        console.log(`✅ Persisted files present for rider ${riderId} after ${attempt} attempts`)
+        try { await this.loadRiderData(riderId) } catch (e) { /* ignore */ }
+        return true
+      }
+      // Exponential backoff with jitter
+      await new Promise((r) => setTimeout(r, interval + Math.floor(Math.random() * 1000)))
+      interval = Math.min(interval * 2, 20000)
+      attempt += 1
+    }
+
+    console.log(`⏱️ Persisted critical files not found for rider ${riderId} after polling`)
     return false
+  }
+
+  // Backwards-compatible alias that polls just for profile with the old signature
+  async pollForPersistedData(riderId, intervalMs = 5000, attempts = 12) {
+    // Use multiple-files poll but make it quick: fewer attempts and smaller interval
+    return await this.pollForMultiplePersistedFiles(riderId, ['profile.json','events_summary.json','races.json'], Math.max(1000, intervalMs), Math.min(10, attempts))
   }
 
   // Clear cache

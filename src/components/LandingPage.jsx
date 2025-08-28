@@ -90,12 +90,24 @@ const LandingPage = ({ onRiderSelected }) => {
 
     try {
       const result = await riderDataFetcher.refreshRiderData(pendingRiderId)
-  // If backend reported progress through the common onProgress mechanism, disable simulated progress
-  simulated = false
-  clearInterval(simInterval)
+      // If backend reported progress through the common onProgress mechanism, disable simulated progress
+      simulated = false
+      clearInterval(simInterval)
       setProgress('Live fetch complete — opening dashboard')
-      // start background poll to detect when persisted files appear
-      try { dataService.pollForPersistedData(pendingRiderId, 5000, 12) } catch (e) { /* ignore */ }
+
+      // Start background poll to detect when persisted files appear. Update spinner steps while polling so
+      // the user sees that we're waiting for CDN propagation.
+      (async () => {
+        setSpinnerSteps((prev) => prev.concat([{ title: 'Waiting for persisted files to appear on CDN...' }]).slice(-6))
+        const ok = await dataService.pollForPersistedData(pendingRiderId, 3000, 10)
+        if (ok) {
+          setSpinnerSteps((prev) => prev.concat([{ title: 'Persisted files detected on CDN' }]).slice(-6))
+          setSpinnerPercent(100)
+        } else {
+          setSpinnerSteps((prev) => prev.concat([{ title: 'Timed out waiting for persisted files' }]).slice(-6))
+        }
+      })()
+
       // If the fetch returned structured data, pass it through to the app so
       // the app can use it immediately (avoids relying on persisted /data files)
       if (result && typeof result === 'object') {
