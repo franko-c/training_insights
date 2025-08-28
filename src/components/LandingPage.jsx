@@ -24,16 +24,17 @@ const LandingPage = ({ onRiderSelected }) => {
     }
 
     const cleanedRiderId = validation.riderId
-    setLoading(true)
+    // Do a quick cached check without showing the full overlay spinner to avoid a flash.
     setProgress('Checking for cached data...')
-  setSpinnerSteps([])
-  setSpinnerPercent(null)
+    setSpinnerSteps([])
+    setSpinnerPercent(null)
 
     try {
       const found = await riderDataFetcher.hasRiderData(cleanedRiderId)
       if (found) {
         setProgress('Found cached data — opening dashboard')
-        onRiderSelected(cleanedRiderId)
+        // small delay so the UI doesn't jarringly switch
+        setTimeout(() => onRiderSelected(cleanedRiderId), 150)
         return
       }
 
@@ -43,8 +44,6 @@ const LandingPage = ({ onRiderSelected }) => {
       setProgress('No cached data available — confirm to fetch live')
     } catch (err) {
       setError(err.message || String(err))
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -54,7 +53,24 @@ const LandingPage = ({ onRiderSelected }) => {
     setLoading(true)
     setProgress('Starting live fetch — this may take ~10-30s')
     setSpinnerSteps([])
-    setSpinnerPercent(null)
+    setSpinnerPercent(5)
+
+    // Simulated progress fallback: advance percent slowly until backend reports progress
+    let simulated = true
+    let simPerc = 5
+    const simInterval = setInterval(() => {
+      if (!simulated) return
+      simPerc = Math.min(70, simPerc + Math.random() * 8)
+      setSpinnerPercent(simPerc)
+      // Push a lightweight step occasionally
+      if (Math.random() > 0.7) {
+        setSpinnerSteps((prev) => {
+          const title = `Fetching... ${Math.round(simPerc)}%`
+          if (prev.length && prev[prev.length - 1].title === title) return prev
+          return prev.concat([{ title }])
+        })
+      }
+    }, 450)
 
     riderDataFetcher.onProgress = (p) => {
       if (!p) return
@@ -73,6 +89,9 @@ const LandingPage = ({ onRiderSelected }) => {
 
     try {
       const result = await riderDataFetcher.refreshRiderData(pendingRiderId)
+  // If backend reported progress through the common onProgress mechanism, disable simulated progress
+  simulated = false
+  clearInterval(simInterval)
       setProgress('Live fetch complete — opening dashboard')
       // start background poll to detect when persisted files appear
       try { dataService.pollForPersistedData(pendingRiderId, 5000, 12) } catch (e) { /* ignore */ }
@@ -94,7 +113,7 @@ const LandingPage = ({ onRiderSelected }) => {
         setPendingRiderId(null)
         setSpinnerSteps([])
         setSpinnerPercent(null)
-      }, 600)
+      }, 1200)
     }
   }
 
