@@ -13,3 +13,7 @@ zwift_api_client/auth/.sessions/
 # Local env and secrets
 .env
 .venv/
+
+# macOS Finder
+.DS_Store
+zwift_api_client/.DS_Store
