@@ -1,0 +1,23 @@
+{
+  "rider_id": "6812405",
+  "extraction_date": "2025-08-28T00:17:54.758592",
+  "name": "Max Min",
+  "athlete_id": "0",
+  "zwift_id": "6812405",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/c275a062-3076176",
+  "team": "GTR",
+  "team_id": "19667",
+  "category": "B",
+  "weight": 67.6,
+  "ftp": 227,
+  "wkg": 3.36,
+  "zwift_racing_score": 410.0,
+  "strava_url": "https://www.strava.com/athletes/0",
+  "power_summary": {
+    "15s": 438,
+    "1min": 396,
+    "5min": 268,
+    "20min": 237
+  }
+}
