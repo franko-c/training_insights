@@ -45,6 +45,33 @@ jobs:
             echo "No generated data found for ${{ inputs.rider_id }}"
           fi
 
+      - name: Validate generated files
+        run: |
+          set -euo pipefail
+          echo "Validating generated JSON files for ${{ inputs.rider_id }}"
+          TARGET_DIR=public/data/riders/${{ inputs.rider_id }}
+          required=(profile.json races.json events_summary.json)
+          missing=()
+          if [ ! -d "$TARGET_DIR" ]; then
+            echo "Target directory $TARGET_DIR does not exist"
+            exit 1
+          fi
+          for f in "${required[@]}"; do
+            if [ ! -s "$TARGET_DIR/$f" ]; then
+              echo "MISSING: $TARGET_DIR/$f"
+              missing+=("$f")
+            else
+              echo "FOUND: $TARGET_DIR/$f"
+            fi
+          done
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "Error: required generated files are missing: ${missing[*]}"
+            echo "Listing $TARGET_DIR contents for debugging:" 
+            ls -la "$TARGET_DIR" || true
+            # Exit non-zero so the workflow run is clearly marked failed and operators can inspect logs
+            exit 1
+          fi
+
       - name: Commit and push generated files
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
