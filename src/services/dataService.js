@@ -135,7 +135,8 @@ export class DataService {
         // If the response looks like HTML, treat it as the SPA fallback and consider the file missing.
           const looksLikeHtml = /<\/?html|<!doctype/i.test(text)
           if (looksLikeHtml) {
-            console.warn(`Received HTML fallback for ${filePath}; treating as missing persisted file`)
+            const reqId = Math.random().toString(36).slice(2, 9)
+            console.warn(`Received HTML fallback for ${filePath}; treating as missing persisted file`, { requestId: reqId, ts: new Date().toISOString(), preview: text.substring(0, 512) })
 
             // Try a safe backend fallback once: ask the Netlify function to provide the live payload
             // without forcing a refresh. This helps in cases where the static file isn't published yet

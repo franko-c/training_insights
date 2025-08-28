@@ -72,6 +72,14 @@ jobs:
             exit 1
           fi
 
+      - name: Upload generated data artifact on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-rider-data-${{ inputs.rider_id }}
+          path: zwift_api_client/data/riders/${{ inputs.rider_id }}
+
+
       - name: Commit and push generated files
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
