@@ -378,30 +378,54 @@ export class DataService {
 
         if (content !== null && content !== undefined) {
           // Normalize event file shapes so loadEventData can consume them.
+          const ensureArrayShape = (arr, keyName) => {
+            if (Array.isArray(arr)) {
+              const obj = {}
+              obj[keyName] = arr
+              obj[`total_${keyName}`] = arr.length
+              return obj
+            }
+            if (arr && typeof arr === 'object') return arr
+            return { [keyName]: [], [`total_${keyName}`]: 0 }
+          }
+
           if (fname === 'races') {
+            // Accept shapes: Array, { races: [...] }, { count/events }, payload.events.races.events
             if (Array.isArray(content)) {
-              this.cache.set(fileKey, { races: content, total_races: content.length, latest_race_date: null })
-            } else if (content.races || content.total_races) {
-              this.cache.set(fileKey, content)
+              this.cache.set(fileKey, ensureArrayShape(content, 'races'))
+            } else if (content.races || content.total_races || content.events) {
+              // If content.events exists, normalize to races
+              if (content.events && Array.isArray(content.events)) {
+                this.cache.set(fileKey, { races: content.events, total_races: content.events.length, latest_race_date: content.latest_date || content.latest_race_date || null })
+              } else {
+                this.cache.set(fileKey, content)
+              }
             } else {
-              // unknown shape - wrap as races array if possible
-              this.cache.set(fileKey, { races: Array.isArray(content) ? content : [], total_races: (Array.isArray(content) ? content.length : 0) })
+              this.cache.set(fileKey, ensureArrayShape(content, 'races'))
             }
           } else if (fname === 'group_rides') {
             if (Array.isArray(content)) {
-              this.cache.set(fileKey, { group_rides: content, total_group_rides: content.length, latest_ride_date: null })
-            } else if (content.group_rides || content.total_group_rides) {
-              this.cache.set(fileKey, content)
+              this.cache.set(fileKey, ensureArrayShape(content, 'group_rides'))
+            } else if (content.group_rides || content.total_group_rides || content.events) {
+              if (content.events && Array.isArray(content.events)) {
+                this.cache.set(fileKey, { group_rides: content.events, total_group_rides: content.events.length, latest_ride_date: content.latest_date || null })
+              } else {
+                this.cache.set(fileKey, content)
+              }
             } else {
-              this.cache.set(fileKey, { group_rides: Array.isArray(content) ? content : [], total_group_rides: (Array.isArray(content) ? content.length : 0) })
+              this.cache.set(fileKey, ensureArrayShape(content, 'group_rides'))
             }
           } else if (fname === 'workouts') {
             if (Array.isArray(content)) {
-              this.cache.set(fileKey, { workouts: content, total_workouts: content.length, latest_workout_date: null })
-            } else if (content.workouts || content.total_workouts) {
-              this.cache.set(fileKey, content)
+              this.cache.set(fileKey, ensureArrayShape(content, 'workouts'))
+            } else if (content.workouts || content.total_workouts || content.events) {
+              if (content.events && Array.isArray(content.events)) {
+                this.cache.set(fileKey, { workouts: content.events, total_workouts: content.events.length, latest_workout_date: content.latest_date || null })
+              } else {
+                this.cache.set(fileKey, content)
+              }
             } else {
-              this.cache.set(fileKey, { workouts: Array.isArray(content) ? content : [], total_workouts: (Array.isArray(content) ? content.length : 0) })
+              this.cache.set(fileKey, ensureArrayShape(content, 'workouts'))
             }
           } else {
             this.cache.set(fileKey, content)

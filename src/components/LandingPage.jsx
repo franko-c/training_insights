@@ -79,10 +79,11 @@ const LandingPage = ({ onRiderSelected }) => {
       if (p.percent !== undefined && p.percent !== null) setSpinnerPercent(p.percent)
       if (p.step || p.message) {
         setSpinnerSteps((prev) => {
-          // Avoid repeating the same step message consecutively
           const title = p.message || p.step
           if (prev.length && prev[prev.length - 1].title === title) return prev
-          return prev.concat([{ title, detail: p.detail }])
+          const next = prev.concat([{ title, detail: p.detail }])
+          // keep last 6 steps only
+          return next.slice(-6)
         })
       }
     }
