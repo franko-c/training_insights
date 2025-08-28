@@ -203,7 +203,7 @@ export class DataService {
     }
 
     try {
-      const data = await this.loadRiderFile(riderId, eventType)
+  let data = await this.loadRiderFile(riderId, eventType)
       if (!data) {
         console.log(`📂 No persisted ${eventType} file for rider ${riderId}`)
         return { count: 0, events: [] }
