@@ -1,0 +1,23 @@
+{
+  "rider_id": "1119043",
+  "extraction_date": "2025-08-28T19:54:08.514826",
+  "name": "Hywel Davies",
+  "athlete_id": "435768",
+  "zwift_id": "1119043",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/b4b9d3fc-588516",
+  "team": "Wahoo Esports",
+  "team_id": "4516",
+  "category": "A+",
+  "weight": 64.0,
+  "ftp": 319,
+  "wkg": 4.98,
+  "zwift_racing_score": 955.0,
+  "strava_url": "https://www.strava.com/athletes/435768",
+  "power_summary": {
+    "15s": 810,
+    "1min": 570,
+    "5min": 388,
+    "20min": 333
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "extraction_date": "2025-08-28T19:54:11.223398",
+  "total_workouts": 4,
+  "latest_workout_date": "2019-04-17",
+  "workouts": [
+    {
+      "event_title": "Hywel Davies",
+      "event_date": "2019-04-17",
+      "event_timestamp": 1555524000,
+      "position": 2,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 192,
+      "avg_wkg": "3.1",
+      "team": "Wahoo Esports",
+      "distance": 0,
+      "points": ""
+    },
+    {
+      "event_title": "Hywel Davies",
+      "event_date": "2019-04-15",
+      "event_timestamp": 1555351200,
+      "position": 55,
+      "position_in_category": 0,
+      "category": "A",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 199,
+      "avg_wkg": "3.2",
+      "team": "Wahoo Esports",
+      "distance": 0,
+      "points": ""
+    },
+    {
+      "event_title": "Hywel Davies",
+      "event_date": "2019-03-20",
+      "event_timestamp": 1553108400,
+      "position": 1,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 247,
+      "avg_wkg": "3.9",
+      "team": "Wahoo Esports",
+      "distance": 0,
+      "points": ""
+    },
+    {
+      "event_title": "Hywel Davies",
+      "event_date": "2019-03-06",
+      "event_timestamp": 1551898800,
+      "position": 1,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 238,
+      "avg_wkg": "3.8",
+      "team": "Wahoo Esports",
+      "distance": 0,
+      "points": ""
+    }
+  ],
+  "source": "profile_results_api",
+  "note": "Structured training workouts only - optimized for training analysis"
+}
