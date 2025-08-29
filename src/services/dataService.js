@@ -36,6 +36,7 @@ export class DataService {
           if (combined.events && combined.events.workouts) this.cache.set(`file-${riderId}-workouts`, combined.events.workouts)
           if (combined.events && combined.events.summary) this.cache.set(`file-${riderId}-events_summary`, combined.events.summary)
           console.log(`♻️ Restored hydrated rider ${riderId} from sessionStorage`)
+          try { remoteLog && remoteLog('info', 'restore_session', { riderId }) } catch(e){}
         } catch (e) { /* ignore per-item errors */ }
       })
     } catch (e) {
@@ -111,7 +112,8 @@ export class DataService {
     try {
       // Use the public directory path for now (until we implement true self-containment)
   const filePath = `/data/riders/${riderId}/${fileName}.json`
-      console.log(`Attempting to load: ${filePath}`)
+  console.log(`Attempting to load: ${filePath}`)
+  try { remoteLog && remoteLog('info', 'file_load_attempt', { riderId, fileName, filePath }) } catch(e){}
       const response = await fetch(filePath)
       
       if (!response.ok) {
@@ -138,6 +140,8 @@ export class DataService {
             const reqId = Math.random().toString(36).slice(2, 9)
             console.warn(`Received HTML fallback for ${filePath}; treating as missing persisted file`, { requestId: reqId, ts: new Date().toISOString(), preview: text.substring(0, 512) })
 
+            try { remoteLog && remoteLog('warn', 'html_fallback', { riderId, fileName, requestId: reqId }) } catch(e){}
+
             // Try a safe backend fallback once: ask the Netlify function to provide the live payload
             // without forcing a refresh. This helps in cases where the static file isn't published yet
             // but the backend can return the generated payload directly.
@@ -159,6 +163,7 @@ export class DataService {
 
                     // If hydration populated the requested file, return it
                     if (this.cache.has(fileKey)) {
+                        try { remoteLog && remoteLog('info', 'backend_fallback_hydrated', { riderId, fileName }) } catch(e){}
                       return this.cache.get(fileKey)
                     }
                   }
@@ -178,14 +183,17 @@ export class DataService {
         }
 
         // Otherwise, it's likely a plain-text JSON (e.g. GitHub raw) but parsing still failed.
-        console.warn(`Could not parse response body for ${filePath}; treating as missing`)
+  console.warn(`Could not parse response body for ${filePath}; treating as missing`)
+  try { remoteLog && remoteLog('warn', 'parse_failed', { riderId, fileName }) } catch(e){}
         return null
       }
 
-      this.cache.set(fileKey, data)
+  this.cache.set(fileKey, data)
+  try { remoteLog && remoteLog('info', 'file_load_success', { riderId, fileName }) } catch(e){}
       return data
     } catch (error) {
-      console.error(`Error loading file ${fileName} for rider ${riderId}:`, error)
+  console.error(`Error loading file ${fileName} for rider ${riderId}:`, error)
+  try { remoteLog && remoteLog('error', 'file_load_error', { riderId, fileName, error: String(error) }) } catch(e){}
   // In case of any error, return null so caller can decide how to proceed
   return null
     }
