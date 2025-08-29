@@ -1,0 +1,12 @@
+{
+  "ts": "2025-08-29T12:50:49.090Z",
+  "id": "1756471849090-8jh361c",
+  "source": "frontend",
+  "level": "info",
+  "message": "landing_progress",
+  "meta": {
+    "riderId": "1297609",
+    "step": "done",
+    "percent": 100
+  }
+}
