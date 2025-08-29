@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component {
   }
 
   render() {
-    if (this.state.hasError) {
+  if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
@@ -51,11 +51,12 @@ class ErrorBoundary extends React.Component {
                 Reload Dashboard
               </button>
             </div>
-            {this.state.error && process.env.NODE_ENV === 'development' && (
-              <details className="mt-4 text-left">
+            {this.state.error && (
+              <details open className="mt-4 text-left">
                 <summary className="text-sm text-gray-500 cursor-pointer">Error Details</summary>
-                <pre className="text-xs bg-gray-100 p-2 mt-2 rounded overflow-auto">
-                  {this.state.error.toString()}
+                <pre className="text-xs bg-gray-100 p-2 mt-2 rounded overflow-auto text-left">
+                  {this.state.error && this.state.error.toString()}
+                  {this.state.error && this.state.error.stack && ('\n\n' + this.state.error.stack)}
                 </pre>
               </details>
             )}

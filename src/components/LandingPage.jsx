@@ -214,6 +214,9 @@ const LandingPage = ({ onRiderSelected }) => {
                     <div>
                       <h3 className="text-sm font-medium text-red-800">Error</h3>
                       <div className="text-sm text-red-700 mt-1 whitespace-pre-line">{error}</div>
+                              {error && error.stack && (
+                                <pre className="text-xs text-red-600 mt-2 bg-gray-100 p-2 rounded overflow-auto">{error.stack}</pre>
+                              )}
                     </div>
                   </div>
                 </div>
