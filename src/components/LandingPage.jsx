@@ -121,9 +121,15 @@ const LandingPage = ({ onRiderSelected }) => {
       // If the fetch returned structured data, pass it through to the app so
       // the app can use it immediately (avoids relying on persisted /data files)
       if (result && typeof result === 'object') {
-        onRiderSelected(result)
+        try {
+          onRiderSelected(result)
+        } catch (e) {
+          console.error('onRiderSelected threw for live result payload:', e, { payload: result })
+          // Fallback: pass rider id to avoid breaking the app
+          try { onRiderSelected(pendingRiderId) } catch (e2) { console.error('Fallback onRiderSelected also failed', e2) }
+        }
       } else {
-        onRiderSelected(pendingRiderId)
+        try { onRiderSelected(pendingRiderId) } catch (e) { console.error('onRiderSelected threw for riderId fallback', e, { riderId: pendingRiderId }) }
       }
     } catch (err) {
       setError(err.message || 'Live fetch failed')
