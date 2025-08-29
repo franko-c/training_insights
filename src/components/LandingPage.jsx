@@ -44,7 +44,7 @@ const LandingPage = ({ onRiderSelected }) => {
       setAskLiveRefresh(true)
       setProgress('No cached data available — confirm to fetch live')
     } catch (err) {
-      setError(err.message || String(err))
+      setError(err)
     }
   }
 
@@ -141,7 +141,7 @@ const LandingPage = ({ onRiderSelected }) => {
         try { onRiderSelected(pendingRiderId) } catch (e) { remoteLog('error', 'onRiderSelected_fallback_throw', { riderId: pendingRiderId, error: String(e) }); console.error('onRiderSelected threw for riderId fallback', e, { riderId: pendingRiderId }) }
       }
     } catch (err) {
-      setError(err.message || 'Live fetch failed')
+      setError(err)
     } finally {
       riderDataFetcher.onProgress = null
       // show final state briefly then clear spinner state
