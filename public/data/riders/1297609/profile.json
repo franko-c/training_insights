@@ -1,0 +1,23 @@
+{
+  "rider_id": "1297609",
+  "extraction_date": "2025-08-29T12:51:13.262960",
+  "name": "Big Bry",
+  "athlete_id": "193495",
+  "zwift_id": "1297609",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/680a8dff-2432913",
+  "team": "HERD",
+  "team_id": "2639",
+  "category": "B",
+  "weight": 77.5,
+  "ftp": 316,
+  "wkg": 4.08,
+  "zwift_racing_score": 757.0,
+  "strava_url": "https://www.strava.com/athletes/193495",
+  "power_summary": {
+    "15s": 831,
+    "1min": 545,
+    "5min": 367,
+    "20min": 330
+  }
+}
