@@ -1,0 +1,10 @@
+{
+  "ts": "2025-08-29T12:50:49.640Z",
+  "id": "1756471849640-nnf42i0",
+  "source": "frontend",
+  "level": "info",
+  "message": "railway_completed",
+  "meta": {
+    "riderId": "1297609"
+  }
+}
