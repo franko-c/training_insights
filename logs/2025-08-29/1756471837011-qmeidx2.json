@@ -1,0 +1,10 @@
+{
+  "ts": "2025-08-29T12:50:37.011Z",
+  "id": "1756471837011-qmeidx2",
+  "source": "frontend",
+  "level": "info",
+  "message": "refresh_request",
+  "meta": {
+    "riderId": "1297609"
+  }
+}
