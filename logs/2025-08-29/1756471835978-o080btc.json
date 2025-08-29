@@ -1,0 +1,10 @@
+{
+  "ts": "2025-08-29T12:50:35.978Z",
+  "id": "1756471835978-o080btc",
+  "source": "frontend",
+  "level": "info",
+  "message": "landing_fetch_start",
+  "meta": {
+    "riderId": "1297609"
+  }
+}
