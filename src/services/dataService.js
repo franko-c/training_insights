@@ -117,16 +117,18 @@ export class DataService {
       const response = await fetch(filePath)
       
       if (!response.ok) {
-        console.error(`HTTP Error ${response.status} for ${filePath}`)
-        throw new Error(`Failed to load ${fileName}: ${response.status}`)
+    const msg = `HTTP Error ${response.status} for ${filePath}`
+    console.error(msg)
+    try { remoteLog && remoteLog('error', 'file_fetch_http_error', { riderId, fileName, status: response.status, filePath }) } catch(e){}
+    throw new Error(`${msg}`)
       }
       
       // Check content type and read text body
       const contentType = response.headers.get('content-type')
       console.log(`Content-Type for ${filePath}: ${contentType}`)
 
-      const text = await response.text()
-      console.log(`Response text preview for ${filePath}:`, text.substring(0, 200))
+  const text = await response.text()
+  console.log(`Response text preview for ${filePath}:`, text.substring(0, 200))
 
       // Try to parse the response as JSON even if the content-type is not strictly application/json.
       // GitHub raw files often return text/plain; charset=utf-8 but contain valid JSON.
@@ -176,15 +178,18 @@ export class DataService {
             return null
           }
 
-        // If content-type explicitly indicates JSON but parsing failed, log and treat as missing
+        // If content-type explicitly indicates JSON but parsing failed, treat as an actual parse error
         if (contentType && contentType.includes('application/json')) {
-          console.error(`Content-Type is application/json but parsing failed for ${filePath}:`, parseErr)
-          return null
+          const parseErrPreview = text.substring(0, 512)
+          const parseError = new Error(`Failed to parse JSON for ${filePath}`)
+          parseError.details = { contentType, preview: parseErrPreview }
+          try { remoteLog && remoteLog('error', 'file_parse_failed', { riderId, fileName, contentType, preview: parseErrPreview.slice(0,200) }) } catch(e){}
+          throw parseError
         }
 
-        // Otherwise, it's likely a plain-text JSON (e.g. GitHub raw) but parsing still failed.
-  console.warn(`Could not parse response body for ${filePath}; treating as missing`)
-  try { remoteLog && remoteLog('warn', 'parse_failed', { riderId, fileName }) } catch(e){}
+        // Otherwise, it's likely a plain-text JSON (e.g. GitHub raw) but parsing still failed; warn and treat as missing
+        console.warn(`Could not parse response body for ${filePath}; treating as missing`)
+        try { remoteLog && remoteLog('warn', 'parse_failed', { riderId, fileName }) } catch(e){}
         return null
       }
 
