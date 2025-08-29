@@ -4,6 +4,7 @@ import LandingPage from './components/LandingPage'
 import LoadingSpinner from './components/LoadingSpinner'
 import ErrorBoundary from './components/ErrorBoundary'
 import { dataService } from './services/dataService'
+import { remoteLog } from './utils/logger'
 
 function App() {
   const [currentRiderId, setCurrentRiderId] = useState(null)
@@ -36,6 +37,7 @@ function App() {
   // lookups succeed (avoids reading /data files immediately).
   try { dataService.hydrateFromLiveResult(riderOrResult) } catch (e) { /* ignore */ }
   setRiderData(normalized)
+  try { remoteLog && remoteLog('info', 'rider_selected_live', { riderId: id }) } catch(e){}
         setLoading(false)
         return
       }
@@ -54,9 +56,11 @@ function App() {
     try {
       // Load rider data using the dataService
       const data = await dataService.loadRiderData(riderId)
+  try { remoteLog && remoteLog('info', 'rider_selected_cached', { riderId }) } catch(e){}
       setRiderData(data)
     } catch (err) {
-      console.error('Failed to load rider data:', err)
+  console.error('Failed to load rider data:', err)
+  try { remoteLog && remoteLog('error', 'rider_load_failed', { riderId, error: String(err) }) } catch(e){}
       setError(`Failed to load data for rider ${riderId}: ${err.message}`)
       setCurrentRiderId(null)
     } finally {

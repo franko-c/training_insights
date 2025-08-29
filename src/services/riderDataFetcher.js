@@ -2,6 +2,7 @@
  * Rider Data Fetching Service
  * Interfaces with the Python zwift_api_client to fetch and manage rider data
  */
+import { remoteLog } from '../utils/logger'
 
 export class RiderDataFetcher {
   constructor() {
@@ -59,10 +60,12 @@ export class RiderDataFetcher {
     try {
   // Try Railway API first (do not force refresh by default)
   if (this.onProgress) this.onProgress({ step: 'start', message: 'Attempting cached or fast fetch' })
+  try { remoteLog && remoteLog('info', 'fetch_attempt', { riderId }) } catch(e){}
   const response = await fetch(`${this.railwayApiBase}/fetch-rider/${riderId}`)
       if (response.ok) {
         const result = await response.json()
         if (this.onProgress) this.onProgress({ step: 'railway', message: 'Railway returned data' })
+        try { remoteLog && remoteLog('info', 'railway_returned', { riderId }) } catch(e){}
         if (result.success !== false) {
           return result
         }
@@ -81,6 +84,7 @@ export class RiderDataFetcher {
       })
       if (netlifyResponse.ok) {
         const result = await netlifyResponse.json()
+        try { remoteLog && remoteLog('info', 'netlify_returned', { riderId }) } catch(e){}
         if (result.success) {
           return result
         }
@@ -100,6 +104,7 @@ export class RiderDataFetcher {
   // Try Railway API first and explicitly request a forced refresh
   if (this.onProgress) this.onProgress({ step: 'start', message: 'Requesting live refresh', percent: 5 })
   if (this.onProgress) this.onProgress({ step: 'contacting_railway', message: 'Contacting backend service', percent: 10 })
+  try { remoteLog && remoteLog('info', 'refresh_request', { riderId }) } catch(e){}
   const response = await fetch(`${this.railwayApiBase}/fetch-rider/${riderId}?force_refresh=true`)
       if (response.ok) {
         if (this.onProgress) this.onProgress({ step: 'railway_received', message: 'Railway acknowledged request', percent: 30 })
@@ -113,7 +118,8 @@ export class RiderDataFetcher {
             }
           } catch (e) { /* ignore */ }
         }
-        if (this.onProgress) this.onProgress({ step: 'railway_completed', message: 'Railway returned data', percent: 80 })
+  if (this.onProgress) this.onProgress({ step: 'railway_completed', message: 'Railway returned data', percent: 80 })
+  try { remoteLog && remoteLog('info', 'railway_completed', { riderId }) } catch(e){}
         if (result.success !== false) {
           if (this.onProgress) this.onProgress({ step: 'done', message: 'Live refresh complete', percent: 100 })
           return result
@@ -133,15 +139,17 @@ export class RiderDataFetcher {
       })
       if (netlifyResponse.ok) {
         const result = await netlifyResponse.json()
-        if (this.onProgress) this.onProgress({ step: 'netlify', message: 'Netlify function returned data', percent: 90 })
+  if (this.onProgress) this.onProgress({ step: 'netlify', message: 'Netlify function returned data', percent: 90 })
+  try { remoteLog && remoteLog('info', 'netlify_function_returned', { riderId }) } catch(e){}
         if (result.success) {
           if (this.onProgress) this.onProgress({ step: 'done', message: 'Live refresh complete', percent: 100 })
           return result
         }
         throw new Error(result.error || 'Netlify refresh failed')
       }
-      throw new Error('REFRESH_API_NOT_AVAILABLE')
+  throw new Error('REFRESH_API_NOT_AVAILABLE')
     } catch (error) {
+  try { remoteLog && remoteLog('error', 'refresh_failed', { riderId, error: String(error) }) } catch(e){}
       throw error
     }
   }
@@ -185,6 +193,7 @@ export class RiderDataFetcher {
     
     return { valid: true, riderId: cleaned }
   }
+
 }
 
 // Create singleton instance

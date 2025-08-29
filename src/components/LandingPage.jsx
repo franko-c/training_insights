@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import LoadingSpinner from './LoadingSpinner'
 import { riderDataFetcher } from '../services/riderDataFetcher'
 import { dataService } from '../services/dataService'
+import { remoteLog } from '../utils/logger'
 
 const LandingPage = ({ onRiderSelected }) => {
   const [riderId, setRiderId] = useState('')
@@ -55,9 +56,10 @@ const LandingPage = ({ onRiderSelected }) => {
   setSpinnerSteps([{ title: 'Fetching...' }])
   setSpinnerPercent(5)
 
-    // Simulated progress fallback: advance percent slowly until backend reports progress
+  // Simulated progress fallback: advance percent slowly until backend reports progress
     let simulated = true
     let simPerc = 5
+  remoteLog('info', 'landing_fetch_start', { riderId: pendingRiderId })
     const simInterval = setInterval(() => {
       if (!simulated) return
       simPerc = Math.min(70, simPerc + Math.random() * 8)
@@ -70,7 +72,7 @@ const LandingPage = ({ onRiderSelected }) => {
       })
     }, 450)
 
-    riderDataFetcher.onProgress = (p) => {
+  riderDataFetcher.onProgress = (p) => {
       if (!p) return
       // p can be { step, message, percent }
       if (p.message) setProgress(p.message)
@@ -95,6 +97,10 @@ const LandingPage = ({ onRiderSelected }) => {
           const next = (prev || []).concat([{ title, detail: p.detail }])
           return next.slice(-6)
         })
+        // Small progress log (not too verbose)
+        if (p.percent && p.percent % 20 === 0) {
+          remoteLog('info', 'landing_progress', { riderId: pendingRiderId, step: p.step, percent: p.percent })
+        }
       }
     }
 
@@ -121,15 +127,17 @@ const LandingPage = ({ onRiderSelected }) => {
       // If the fetch returned structured data, pass it through to the app so
       // the app can use it immediately (avoids relying on persisted /data files)
       if (result && typeof result === 'object') {
+        remoteLog('info', 'landing_fetch_complete', { riderId: pendingRiderId })
         try {
           onRiderSelected(result)
         } catch (e) {
+          remoteLog('error', 'onRiderSelected_throw', { riderId: pendingRiderId, error: String(e) })
           console.error('onRiderSelected threw for live result payload:', e, { payload: result })
           // Fallback: pass rider id to avoid breaking the app
-          try { onRiderSelected(pendingRiderId) } catch (e2) { console.error('Fallback onRiderSelected also failed', e2) }
+          try { onRiderSelected(pendingRiderId) } catch (e2) { remoteLog('error', 'onRiderSelected_fallback_throw', { riderId: pendingRiderId, error: String(e2) }); console.error('Fallback onRiderSelected also failed', e2) }
         }
       } else {
-        try { onRiderSelected(pendingRiderId) } catch (e) { console.error('onRiderSelected threw for riderId fallback', e, { riderId: pendingRiderId }) }
+        try { onRiderSelected(pendingRiderId) } catch (e) { remoteLog('error', 'onRiderSelected_fallback_throw', { riderId: pendingRiderId, error: String(e) }); console.error('onRiderSelected threw for riderId fallback', e, { riderId: pendingRiderId }) }
       }
     } catch (err) {
       setError(err.message || 'Live fetch failed')
