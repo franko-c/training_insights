@@ -1,0 +1,54 @@
+{
+  "extraction_date": "2025-08-29T12:51:22.957972",
+  "total_workouts": 3,
+  "latest_workout_date": "2022-12-19",
+  "workouts": [
+    {
+      "event_title": "Big Bry  (Herd)",
+      "event_date": "2022-12-19",
+      "event_timestamp": 1671480000,
+      "position": 5,
+      "position_in_category": 0,
+      "category": "A",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 195,
+      "avg_wkg": "2.6",
+      "team": "HERD",
+      "distance": 0,
+      "points": ""
+    },
+    {
+      "event_title": "Big Bry  (Herd)",
+      "event_date": "2022-08-23",
+      "event_timestamp": 1661281200,
+      "position": 2,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 236,
+      "avg_wkg": "3.0",
+      "team": "HERD",
+      "distance": 0,
+      "points": ""
+    },
+    {
+      "event_title": "Big Bry  (Herd)",
+      "event_date": "2022-05-31",
+      "event_timestamp": 1654020000,
+      "position": 4,
+      "position_in_category": 0,
+      "category": "E",
+      "event_type": "TYPE_WORKOUT TYPE_WORKOUT",
+      "time": 0.0,
+      "avg_power": 235,
+      "avg_wkg": "3.0",
+      "team": "HERD",
+      "distance": 0,
+      "points": ""
+    }
+  ],
+  "source": "profile_results_api",
+  "note": "Structured training workouts only - optimized for training analysis"
+}
