@@ -52,8 +52,8 @@ const LandingPage = ({ onRiderSelected }) => {
     setAskLiveRefresh(false)
     setLoading(true)
     setProgress('Starting live fetch — this may take ~10-30s')
-    setSpinnerSteps([])
-    setSpinnerPercent(5)
+  setSpinnerSteps([{ title: 'Fetching...' }])
+  setSpinnerPercent(5)
 
     // Simulated progress fallback: advance percent slowly until backend reports progress
     let simulated = true
@@ -62,27 +62,37 @@ const LandingPage = ({ onRiderSelected }) => {
       if (!simulated) return
       simPerc = Math.min(70, simPerc + Math.random() * 8)
       setSpinnerPercent(simPerc)
-      // Push a lightweight step occasionally
-      if (Math.random() > 0.7) {
-        setSpinnerSteps((prev) => {
-          const title = `Fetching... ${Math.round(simPerc)}%`
-          if (prev.length && prev[prev.length - 1].title === title) return prev
-          return prev.concat([{ title }])
-        })
-      }
+      // Update the single fetching step instead of appending lines
+      setSpinnerSteps((prev) => {
+        const base = (prev && prev.length) ? prev.slice(0, -1) : []
+        const fetching = { title: `Fetching... ${Math.round(simPerc)}%` }
+        return base.concat([fetching])
+      })
     }, 450)
 
     riderDataFetcher.onProgress = (p) => {
       if (!p) return
       // p can be { step, message, percent }
       if (p.message) setProgress(p.message)
-      if (p.percent !== undefined && p.percent !== null) setSpinnerPercent(p.percent)
-      if (p.step || p.message) {
+      if (p.percent !== undefined && p.percent !== null) {
+        setSpinnerPercent(p.percent)
+        // Update the fetching step if present instead of appending
         setSpinnerSteps((prev) => {
-          const title = p.message || p.step
-          if (prev.length && prev[prev.length - 1].title === title) return prev
-          const next = prev.concat([{ title, detail: p.detail }])
-          // keep last 6 steps only
+          const title = `Fetching... ${Math.round(p.percent)}%`
+          if (!prev || prev.length === 0) return [{ title }]
+          const last = prev[prev.length - 1]
+          if (last && last.title && last.title.startsWith('Fetching...')) {
+            const next = prev.slice(0, -1).concat([{ ...last, title }])
+            return next.slice(-6)
+          }
+          return prev.concat([{ title }]).slice(-6)
+        })
+      }
+      if (p.step || p.message) {
+        const title = p.message || p.step
+        setSpinnerSteps((prev) => {
+          if (prev && prev.length && prev[prev.length - 1].title === title) return prev
+          const next = (prev || []).concat([{ title, detail: p.detail }])
           return next.slice(-6)
         })
       }
