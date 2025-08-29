@@ -64,11 +64,12 @@ const LandingPage = ({ onRiderSelected }) => {
       if (!simulated) return
       simPerc = Math.min(70, simPerc + Math.random() * 8)
       setSpinnerPercent(simPerc)
-      // Update the single fetching step instead of appending lines
+      // Ensure only a single fetching step exists: remove any prior fetching entries
       setSpinnerSteps((prev) => {
-        const base = (prev && prev.length) ? prev.slice(0, -1) : []
+        const prevSteps = Array.isArray(prev) ? prev : []
+        const other = prevSteps.filter(s => !(s && s.title && s.title.startsWith('Fetching...')))
         const fetching = { title: `Fetching... ${Math.round(simPerc)}%` }
-        return base.concat([fetching])
+        return other.concat([fetching]).slice(-6)
       })
     }, 450)
 
@@ -78,26 +79,26 @@ const LandingPage = ({ onRiderSelected }) => {
       if (p.message) setProgress(p.message)
       if (p.percent !== undefined && p.percent !== null) {
         setSpinnerPercent(p.percent)
-        // Update the fetching step if present instead of appending
+        // Ensure only a single fetching step exists and update it
         setSpinnerSteps((prev) => {
+          const prevSteps = Array.isArray(prev) ? prev : []
+          const other = prevSteps.filter(s => !(s && s.title && s.title.startsWith('Fetching...')))
           const title = `Fetching... ${Math.round(p.percent)}%`
-          if (!prev || prev.length === 0) return [{ title }]
-          const last = prev[prev.length - 1]
-          if (last && last.title && last.title.startsWith('Fetching...')) {
-            const next = prev.slice(0, -1).concat([{ ...last, title }])
-            return next.slice(-6)
-          }
-          return prev.concat([{ title }]).slice(-6)
+          return other.concat([{ title }]).slice(-6)
         })
       }
       if (p.step || p.message) {
         const title = p.message || p.step
-        setSpinnerSteps((prev) => {
-          if (prev && prev.length && prev[prev.length - 1].title === title) return prev
-          const next = (prev || []).concat([{ title, detail: p.detail }])
-          return next.slice(-6)
-        })
-        // Small progress log (not too verbose)
+        // Avoid appending fetching-like messages here
+        if (!(title && title.startsWith && title.startsWith('Fetching...'))) {
+          setSpinnerSteps((prev) => {
+            const prevSteps = Array.isArray(prev) ? prev : []
+            if (prevSteps.length && prevSteps[prevSteps.length - 1].title === title) return prevSteps
+            const next = prevSteps.concat([{ title, detail: p.detail }])
+            return next.slice(-6)
+          })
+        }
+        // Sparse progress log
         if (p.percent && p.percent % 20 === 0) {
           remoteLog('info', 'landing_progress', { riderId: pendingRiderId, step: p.step, percent: p.percent })
         }

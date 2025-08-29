@@ -33,7 +33,9 @@ export async function handler(event, context) {
 
     const content = Buffer.from(JSON.stringify(contentObj, null, 2)).toString('base64')
 
-    const ghUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${encodeURIComponent(path)}`
+  // Allow logs to be committed to a dedicated branch to avoid polluting the default branch.
+  const LOGS_BRANCH = process.env.LOGS_BRANCH || 'logs'
+  const ghUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${encodeURIComponent(path)}?branch=${encodeURIComponent(LOGS_BRANCH)}`
     const body = {
       message: `log: ${contentObj.source} ${contentObj.level} ${id}`,
       content,
