@@ -61,7 +61,8 @@ function App() {
     } catch (err) {
   console.error('Failed to load rider data:', err)
   try { remoteLog && remoteLog('error', 'rider_load_failed', { riderId, error: String(err) }) } catch(e){}
-      setError(`Failed to load data for rider ${riderId}: ${err.message}`)
+      // Store the Error object so the UI can surface message + stack
+      setError(err)
       setCurrentRiderId(null)
     } finally {
       setLoading(false)
