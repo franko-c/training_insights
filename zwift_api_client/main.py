@@ -247,7 +247,7 @@ async def fetch_rider_data(rider_id: str, force_refresh: bool = False, backgroun
                 "operation": "refresh"
             }
         )
-
+    
 
 @app.get("/fetch-rider/{rider_id}")
 async def fetch_rider_get(rider_id: str, force_refresh: Optional[bool] = False, background_tasks: BackgroundTasks = None):

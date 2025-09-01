@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import LoadingSpinner from './LoadingSpinner'
-import { riderDataFetcher } from '../services/riderDataFetcher'
-import { dataService } from '../services/dataService'
+import { fetchRiderLive } from '../services/fetchRiderLive'
 import { remoteLog } from '../utils/logger'
 
 const LandingPage = ({ onRiderSelected }) => {
@@ -17,141 +16,15 @@ const LandingPage = ({ onRiderSelected }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
-
-    const validation = riderDataFetcher.validateRiderId(riderId)
-    if (!validation.valid) {
-      setError(validation.error)
-      return
-    }
-
-    const cleanedRiderId = validation.riderId
-    // Do a quick cached check without showing the full overlay spinner to avoid a flash.
-    setProgress('Checking for cached data...')
-    setSpinnerSteps([])
-    setSpinnerPercent(null)
-
-    try {
-      const found = await riderDataFetcher.hasRiderData(cleanedRiderId)
-      if (found) {
-        setProgress('Found cached data — opening dashboard')
-        // small delay so the UI doesn't jarringly switch
-        setTimeout(() => onRiderSelected(cleanedRiderId), 150)
-        return
-      }
-
-      // No cached data — ask before live fetch
-      setPendingRiderId(cleanedRiderId)
-      setAskLiveRefresh(true)
-      setProgress('No cached data available — confirm to fetch live')
-    } catch (err) {
-      setError(err)
-    }
-  }
-
-  const fetchLiveNow = async () => {
-    if (!pendingRiderId) return
-    setAskLiveRefresh(false)
     setLoading(true)
-    setProgress('Starting live fetch — this may take ~10-30s')
-  setSpinnerSteps([{ title: 'Fetching...' }])
-  setSpinnerPercent(5)
-
-  // Simulated progress fallback: advance percent slowly until backend reports progress
-    let simulated = true
-    let simPerc = 5
-  remoteLog('info', 'landing_fetch_start', { riderId: pendingRiderId })
-    const simInterval = setInterval(() => {
-      if (!simulated) return
-      simPerc = Math.min(70, simPerc + Math.random() * 8)
-      setSpinnerPercent(simPerc)
-      // Ensure only a single fetching step exists: remove any prior fetching entries
-      setSpinnerSteps((prev) => {
-        const prevSteps = Array.isArray(prev) ? prev : []
-        const other = prevSteps.filter(s => !(s && s.title && s.title.startsWith('Fetching...')))
-        const fetching = { title: `Fetching... ${Math.round(simPerc)}%` }
-        return other.concat([fetching]).slice(-6)
-      })
-    }, 450)
-
-  riderDataFetcher.onProgress = (p) => {
-      if (!p) return
-      // p can be { step, message, percent }
-      if (p.message) setProgress(p.message)
-      if (p.percent !== undefined && p.percent !== null) {
-        setSpinnerPercent(p.percent)
-        // Ensure only a single fetching step exists and update it
-        setSpinnerSteps((prev) => {
-          const prevSteps = Array.isArray(prev) ? prev : []
-          const other = prevSteps.filter(s => !(s && s.title && s.title.startsWith('Fetching...')))
-          const title = `Fetching... ${Math.round(p.percent)}%`
-          return other.concat([{ title }]).slice(-6)
-        })
-      }
-      if (p.step || p.message) {
-        const title = p.message || p.step
-        // Avoid appending fetching-like messages here
-        if (!(title && title.startsWith && title.startsWith('Fetching...'))) {
-          setSpinnerSteps((prev) => {
-            const prevSteps = Array.isArray(prev) ? prev : []
-            if (prevSteps.length && prevSteps[prevSteps.length - 1].title === title) return prevSteps
-            const next = prevSteps.concat([{ title, detail: p.detail }])
-            return next.slice(-6)
-          })
-        }
-        // Sparse progress log
-        if (p.percent && p.percent % 20 === 0) {
-          remoteLog('info', 'landing_progress', { riderId: pendingRiderId, step: p.step, percent: p.percent })
-        }
-      }
-    }
 
     try {
-      const result = await riderDataFetcher.refreshRiderData(pendingRiderId)
-      // If backend reported progress through the common onProgress mechanism, disable simulated progress
-      simulated = false
-      clearInterval(simInterval)
-      setProgress('Live fetch complete — opening dashboard')
-
-      // Start background poll to detect when persisted files appear. Update spinner steps while polling so
-      // the user sees that we're waiting for CDN propagation.
-      (async () => {
-        setSpinnerSteps((prev) => prev.concat([{ title: 'Waiting for persisted files to appear on CDN...' }]).slice(-6))
-        const ok = await dataService.pollForPersistedData(pendingRiderId, 3000, 10)
-        if (ok) {
-          setSpinnerSteps((prev) => prev.concat([{ title: 'Persisted files detected on CDN' }]).slice(-6))
-          setSpinnerPercent(100)
-        } else {
-          setSpinnerSteps((prev) => prev.concat([{ title: 'Timed out waiting for persisted files' }]).slice(-6))
-        }
-      })()
-
-      // If the fetch returned structured data, pass it through to the app so
-      // the app can use it immediately (avoids relying on persisted /data files)
-      if (result && typeof result === 'object') {
-        remoteLog('info', 'landing_fetch_complete', { riderId: pendingRiderId })
-        try {
-          onRiderSelected(result)
-        } catch (e) {
-          remoteLog('error', 'onRiderSelected_throw', { riderId: pendingRiderId, error: String(e) })
-          console.error('onRiderSelected threw for live result payload:', e, { payload: result })
-          // Fallback: pass rider id to avoid breaking the app
-          try { onRiderSelected(pendingRiderId) } catch (e2) { remoteLog('error', 'onRiderSelected_fallback_throw', { riderId: pendingRiderId, error: String(e2) }); console.error('Fallback onRiderSelected also failed', e2) }
-        }
-      } else {
-        try { onRiderSelected(pendingRiderId) } catch (e) { remoteLog('error', 'onRiderSelected_fallback_throw', { riderId: pendingRiderId, error: String(e) }); console.error('onRiderSelected threw for riderId fallback', e, { riderId: pendingRiderId }) }
-      }
+      const data = await fetchRiderLive(riderId)
+      onRiderSelected(data)
     } catch (err) {
       setError(err)
     } finally {
-      riderDataFetcher.onProgress = null
-      // show final state briefly then clear spinner state
-      setTimeout(() => {
-        setLoading(false)
-        setProgress('')
-        setPendingRiderId(null)
-        setSpinnerSteps([])
-        setSpinnerPercent(null)
-      }, 1200)
+      setLoading(false)
     }
   }
 
@@ -213,7 +86,7 @@ const LandingPage = ({ onRiderSelected }) => {
                     <div className="text-red-400 mr-3">⚠️</div>
                     <div>
                       <h3 className="text-sm font-medium text-red-800">Error</h3>
-                      <div className="text-sm text-red-700 mt-1 whitespace-pre-line">{error}</div>
+                      <div className="text-sm text-red-700 mt-1 whitespace-pre-line">{error.message}</div>
                               {error && error.stack && (
                                 <pre className="text-xs text-red-600 mt-2 bg-gray-100 p-2 rounded overflow-auto">{error.stack}</pre>
                               )}
