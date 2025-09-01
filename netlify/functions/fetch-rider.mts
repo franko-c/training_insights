@@ -43,6 +43,33 @@ export default async (req: Request, context: Context) => {
     return jsonResponse({ success: false, error: "INVALID_RIDER_ID", message: "riderId must be 6-8 digits" }, 400);
   }
 
+  // DEV ONLY: if running under netlify dev and local cache exists, read from zwift_api_client data dir
+  if (process.env.NETLIFY_DEV) {
+    const localDir = path.join(process.cwd(), 'zwift_api_client', 'data', 'riders', String(riderId));
+    try {
+      await fs.access(localDir);
+      // load each file if present
+      const filenames = ['profile.json', 'power.json', 'events_summary.json', 'races.json', 'group_rides.json', 'workouts.json'];
+      const dataFiles: any = {};
+      for (const name of filenames) {
+        try {
+          const raw = await fs.readFile(path.join(localDir, name), 'utf-8');
+          dataFiles[name.replace('.json', '')] = JSON.parse(raw);
+        } catch (e) {
+          // missing file is fine
+        }
+      }
+      return jsonResponse({ success: true, riderId: String(riderId), profile: dataFiles.profile || {}, files: {
+        power: dataFiles.power || {},
+        events_summary: dataFiles.events_summary || {},
+        races: dataFiles.races || [],
+        group_rides: dataFiles.group_rides || [],
+        workouts: dataFiles.workouts || []
+      }});
+    } catch (_err) {
+      // no local cache, fall through
+    }
+  }
   // Primary behavior: proxy the request to Railway which runs the Python tooling and returns JSON.
   const targetUrl = `${RAILWAY_URL}/fetch-rider/${encodeURIComponent(riderId)}${force_refresh ? "?force_refresh=true" : ""}`;
 
@@ -72,14 +99,17 @@ export default async (req: Request, context: Context) => {
     console.warn(`Error contacting Railway for rider ${riderId}: ${e.message || e}`);
   }
 
-  // Static fallback: if a previously generated file exists in the deployed public folder, return that.
-  try {
-    const staticPath = path.join(process.cwd(), "public", "data", "riders", String(riderId), "profile.json");
-    const raw = await fs.readFile(staticPath, { encoding: "utf-8" });
-    const json = JSON.parse(raw);
-    return jsonResponse({ success: true, riderId: String(riderId), fallback: true, profile: json });
-  } catch (e) {
-    // Nothing available
-    return jsonResponse({ success: false, error: "RAILWAY_AND_STATIC_UNAVAILABLE", message: "Unable to fetch from Railway and no static data found" }, 502);
+  // In development only: static cache fallback
+  if (process.env.NETLIFY_DEV) {
+    try {
+      const staticPath = path.join(process.cwd(), "public", "data", "riders", String(riderId), "profile.json");
+      const raw = await fs.readFile(staticPath, { encoding: "utf-8" });
+      const json = JSON.parse(raw);
+      return jsonResponse({ success: true, riderId: String(riderId), fallback: true, profile: json });
+    } catch (_e) {
+      // no static data, fall through to error response
+    }
   }
+  // Production / non-dev: no fallback
+  return jsonResponse({ success: false, error: "RAILWAY_AND_STATIC_UNAVAILABLE", message: "Unable to fetch live rider data" }, 502);
 };
