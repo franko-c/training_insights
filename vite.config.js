@@ -22,6 +22,15 @@ export default defineConfig({
     fs: {
       // Allow serving files from parent directories
       allow: ['..']
+    },
+    // Proxy Netlify Functions during local Vite development
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8888',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/.netlify/functions')
+      }
     }
   },
   build: {
