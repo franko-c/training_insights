@@ -70,3 +70,8 @@
   for = "/assets/*.js"
   [headers.values]
     Content-Type = "text/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Permissions-Policy = ""

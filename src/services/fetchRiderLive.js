@@ -1,4 +1,4 @@
-// Simple live fetch for rider data, bypassing static files
+// Simple live fetch for rider data via Netlify Functions proxy
 export async function fetchRiderLive(riderId) {
   const resp = await fetch('/api/fetch-rider', {
     method: 'POST',
