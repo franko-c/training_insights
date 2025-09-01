@@ -22,7 +22,8 @@ const LandingPage = ({ onRiderSelected }) => {
       const data = await fetchRiderLive(riderId)
       onRiderSelected(data)
     } catch (err) {
-      setError(err)
+      console.error('Error fetching rider:', err)
+      setError('Unable to fetch rider data. Please check the ID and try again.')
     } finally {
       setLoading(false)
     }
@@ -86,10 +87,7 @@ const LandingPage = ({ onRiderSelected }) => {
                     <div className="text-red-400 mr-3">⚠️</div>
                     <div>
                       <h3 className="text-sm font-medium text-red-800">Error</h3>
-                      <div className="text-sm text-red-700 mt-1 whitespace-pre-line">{error.message}</div>
-                              {error && error.stack && (
-                                <pre className="text-xs text-red-600 mt-2 bg-gray-100 p-2 rounded overflow-auto">{error.stack}</pre>
-                              )}
+                      <div className="text-sm text-red-700 mt-1">{error}</div>
                     </div>
                   </div>
                 </div>
