@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import TooltipComponent from './TooltipSimple'
-import { dataService } from '../services/dataService'
 import { PowerFormatting } from '../utils/powerFormatting'
 
 // CACHE BUSTER: Force component reload - v2.2 FIXED PROPS
@@ -19,6 +18,9 @@ const PowerCurveChart = ({ selectedEventType, eventData, data, dayFilter }) => {
     return <div className="p-4 text-gray-500">Loading rider data...</div>
   }
 
+  // power data is now passed in via props.data.power or data.intervals
+  const powerSeries = data.intervals || data.power?.intervals || []
+
   useEffect(() => {
     console.log('🔄 PowerCurveChart data effect:', {
       hasData: !!data,
@@ -27,7 +29,7 @@ const PowerCurveChart = ({ selectedEventType, eventData, data, dayFilter }) => {
     })
     
     if (data?.rider_id) {
-      loadPowerData(data.rider_id)
+      // loadPowerData(data.rider_id)
     }
   }, [data?.rider_id])
 
@@ -247,19 +249,6 @@ const PowerCurveChart = ({ selectedEventType, eventData, data, dayFilter }) => {
     } catch (error) {
       console.error('Error calculating days ago:', error)
       return null
-    }
-  }
-
-  const loadPowerData = async (riderId) => {
-    setLoading(true)
-    try {
-      const powerInfo = await dataService.loadRiderFile(riderId, 'power')
-      setPowerData(powerInfo)
-    } catch (error) {
-      console.error('Error loading power data:', error)
-      setPowerData(null)
-    } finally {
-      setLoading(false)
     }
   }
 

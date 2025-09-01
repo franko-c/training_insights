@@ -1,27 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { DataAnalysis, dataService } from '../services/dataService'
+// Removed legacy DataAnalysis import
 import RaceDetailCard from './RaceDetailCard'
 
-const EventListView = ({ events = [], eventType, riderId }) => {
+const EventListView = ({ events = [], eventType, riderId, powerData: propPowerData }) => {
   const [sortBy, setSortBy] = useState('date')
   const [sortOrder, setSortOrder] = useState('desc')
   const [showLimit, setShowLimit] = useState(10)
   const [powerData, setPowerData] = useState(null)
 
+  // powerData now passed as prop from Dashboard
   useEffect(() => {
-    if (riderId) {
-      loadPowerData(riderId)
-    }
-  }, [riderId])
-
-  const loadPowerData = async (riderId) => {
-    try {
-      const data = await dataService.loadRiderFile(riderId, 'power')
-      setPowerData(data)
-    } catch (error) {
-      console.error('Error loading power data for event analysis:', error)
-    }
-  }
+    setPowerData(propPowerData)
+  }, [propPowerData])
 
   if (!events || events.length === 0) {
     return (
