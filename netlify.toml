@@ -18,6 +18,8 @@
   # Optimize build performance
   NPM_CONFIG_FUND = "false"
   NPM_CONFIG_AUDIT = "false"
+  # Zwift API backend proxy target
+  RAILWAY_BACKEND_URL = "https://zwiftervals-production.up.railway.app"
 
 # API endpoints routing to functions (MUST come before SPA routing)
 [[redirects]]
@@ -41,11 +43,13 @@
 
 # Headers for API endpoints
 [[headers]]
+  # CORS and security headers for API endpoints
   for = "/api/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Headers = "Content-Type"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Permissions-Policy = "interest-cohort=()"
 
 # Headers for data files
 [[headers]]
