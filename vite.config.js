@@ -24,12 +24,14 @@ export default defineConfig({
       allow: ['..']
     },
     // Proxy Netlify Functions during local Vite development
+    // During local dev, send API calls to local FastAPI server on port 8000
     proxy: {
       '/api': {
-        target: 'http://localhost:8888',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '/.netlify/functions')
+        // Strip the `/api` prefix so path `/api/fetch-rider` becomes `/fetch-rider`
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   },
