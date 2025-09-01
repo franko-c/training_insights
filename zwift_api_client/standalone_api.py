@@ -3,8 +3,9 @@
 Standalone Zwift API for Railway deployment
 """
 
+# Standard library imports
 import os
-import sys
+# Standard imports
 import json
 import asyncio
 import logging
@@ -150,8 +151,8 @@ class SimpleZwiftClient:
             return []
 
 
-# --- Import ZwiftAPIClient and RiderDataManager ---
-from zwift_api_client import ZwiftAPIClient
+# --- Import ZwiftAPIClient and RiderDataManager as part of the package ---
+from zwift_api_client.client.zwift_client import ZwiftAPIClient
 from zwift_api_client.data.rider_data_manager import RiderDataManager
 
 # Create unified API client and data manager

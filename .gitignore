@@ -18,3 +18,9 @@ zwift_api_client/auth/.sessions/
 .DS_Store
 zwift_api_client/.DS_Store
 /public/data/riders/
+# Node.js modules and Vite cache
+node_modules/
+node_modules/.vite/
+# Python caches
+**/__pycache__/
+*.pyc
