@@ -1,0 +1,23 @@
+{
+  "rider_id": "3837944",
+  "extraction_date": "2025-09-01T15:45:21.283909",
+  "name": "Demon Hunter",
+  "athlete_id": "8939157",
+  "zwift_id": "3837944",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/c1112b30-1997857",
+  "team": "GTR",
+  "team_id": "19667",
+  "category": "D",
+  "weight": 74.0,
+  "ftp": 107,
+  "wkg": 1.45,
+  "zwift_racing_score": 64.0,
+  "strava_url": "https://www.strava.com/athletes/8939157",
+  "power_summary": {
+    "15s": 330,
+    "1min": 224,
+    "5min": 144,
+    "20min": 121
+  }
+}
