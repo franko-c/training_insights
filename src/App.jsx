@@ -3,7 +3,7 @@ import Dashboard from './components/Dashboard'
 import LandingPage from './components/LandingPage'
 import LoadingSpinner from './components/LoadingSpinner'
 import ErrorBoundary from './components/ErrorBoundary'
-import { dataService } from './services/dataService'
+import { fetchRiderLive } from './services/fetchRiderLive'
 import { remoteLog } from './utils/logger'
 
 function App() {
@@ -33,9 +33,7 @@ function App() {
         // Normalize a minimal riderData object if the payload includes `profile` or `result`.
         // Prefer top-level profile, then result.profile, else pass the object as-is.
   const normalized = riderOrResult.profile || riderOrResult.result?.profile || riderOrResult
-  // Hydrate the dataService cache from the live result so per-file
-  // lookups succeed (avoids reading /data files immediately).
-  try { dataService.hydrateFromLiveResult(riderOrResult) } catch (e) { /* ignore */ }
+  // Legacy dataService hydration removed
   setRiderData(normalized)
   try { remoteLog && remoteLog('info', 'rider_selected_live', { riderId: id }) } catch(e){}
         setLoading(false)
@@ -54,16 +52,18 @@ function App() {
     setCurrentRiderId(riderId)
 
     try {
-      // Load rider data using the dataService
-      const data = await dataService.loadRiderData(riderId)
-  try { remoteLog && remoteLog('info', 'rider_selected_cached', { riderId }) } catch(e){}
-      setRiderData(data)
+      // Fetch rider data live via backend API
+      const result = await fetchRiderLive(riderId)
+      // Normalize payload and extract profile if present
+      const payload = result.result || result
+      const normalized = payload.profile || payload
+      remoteLog?.('info', 'rider_selected_cached', { riderId })
+      setRiderData(normalized)
     } catch (err) {
-  console.error('Failed to load rider data:', err)
-  try { remoteLog && remoteLog('error', 'rider_load_failed', { riderId, error: String(err) }) } catch(e){}
-      // Store the Error object so the UI can surface message + stack
+      console.error('Failed to load rider data:', err)
+      remoteLog?.('error', 'rider_load_failed', { riderId, error: String(err) })
+      // Show error UI without resetting riderId
       setError(err)
-      setCurrentRiderId(null)
     } finally {
       setLoading(false)
     }
