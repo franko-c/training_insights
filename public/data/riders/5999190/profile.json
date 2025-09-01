@@ -1,0 +1,23 @@
+{
+  "rider_id": "5999190",
+  "extraction_date": "2025-09-01T13:30:13.270405",
+  "name": "4.Lynn Hunter",
+  "athlete_id": "0",
+  "zwift_id": "5999190",
+  "user_id": "563732",
+  "profile_image": "https://static-cdn.zwift.com/prod/profile/cdde1b41-3090018",
+  "team": "GTR",
+  "team_id": "19667",
+  "category": "C",
+  "weight": 59.0,
+  "ftp": 192,
+  "wkg": 3.25,
+  "zwift_racing_score": 318.0,
+  "strava_url": "https://www.strava.com/athletes/0",
+  "power_summary": {
+    "15s": 349,
+    "1min": 252,
+    "5min": 216,
+    "20min": 197
+  }
+}
