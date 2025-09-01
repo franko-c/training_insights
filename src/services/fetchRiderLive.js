@@ -1,17 +1,11 @@
 // Simple live fetch for rider data via Netlify Functions proxy
 export async function fetchRiderLive(riderId) {
-  let resp;
-  if (import.meta.env.DEV) {
-    // Local dev: hit FastAPI directly via proxy; FastAPI expects POST at /fetch-rider/{rider_id}
-    resp = await fetch(`/api/fetch-rider/${riderId}`, { method: 'POST' });
-  } else {
-    // Production: call Netlify Function
-    resp = await fetch('/api/fetch-rider', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ riderId, force_refresh: false }),
-    });
-  }
+  // Call Netlify Function endpoint
+  const resp = await fetch('/api/fetch-rider', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ riderId, force_refresh: false }),
+  });
   if (!resp.ok) {
     throw new Error(`Fetch live rider data failed: HTTP ${resp.status}`);
   }
