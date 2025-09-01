@@ -17,3 +17,4 @@ zwift_api_client/auth/.sessions/
 # macOS Finder
 .DS_Store
 zwift_api_client/.DS_Store
+/public/data/riders/
