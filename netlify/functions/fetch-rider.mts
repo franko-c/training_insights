@@ -2,7 +2,10 @@ import { Context } from "@netlify/functions";
 import path from "path";
 import fs from "fs/promises";
 
-const RAILWAY_URL = process.env.RAILWAY_API_URL || "https://zwiftervals-production.up.railway.app";
+// Determine Railway backend URL from environment, support multiple env var names
+const RAILWAY_URL =
+  process.env.RAILWAY_API_URL || process.env.RAILWAY_URL || process.env.RAILWAY_BACKEND_URL ||
+  "https://zwiftervals-production.up.railway.app";
 
 function jsonResponse(obj: any, status = 200) {
   return new Response(JSON.stringify(obj), {
@@ -71,7 +74,11 @@ export default async (req: Request, context: Context) => {
     }
   }
   // Primary behavior: proxy the request to Railway which runs the Python tooling and returns JSON.
-  const targetUrl = `${RAILWAY_URL}/fetch-rider/${encodeURIComponent(riderId)}${force_refresh ? "?force_refresh=true" : ""}`;
+  // Proxy request to Railway service
+  const targetUrl = `${RAILWAY_URL.replace(/\/+$/, '')}/fetch-rider/${encodeURIComponent(riderId)}${
+    force_refresh ? '?force_refresh=true' : ''
+  }`;
+  console.log(`fetch-rider: proxying to ${targetUrl}`);
 
   try {
     const railwayResp = await fetch(targetUrl, {
@@ -79,7 +86,7 @@ export default async (req: Request, context: Context) => {
       headers: { "Accept": "application/json" },
     });
 
-    if (railwayResp.ok) {
+  if (railwayResp.ok) {
       // Stream the JSON response back to the client without printing everything in logs.
       const data = await railwayResp.json();
 
@@ -93,8 +100,12 @@ export default async (req: Request, context: Context) => {
       return jsonResponse({ success: true, riderId: String(riderId), result: data });
     }
 
-    // If Railway returned non-OK, fall through to static fallback
-    console.warn(`Railway returned status ${railwayResp.status} for rider ${riderId}`);
+    // If Railway returned non-OK, return JSON error but keep HTTP 200
+    console.warn(`Railway returned ${railwayResp.status} ${railwayResp.statusText} for rider ${riderId}`);
+    return jsonResponse(
+      { success: false, error: 'RAILWAY_ERROR', status: railwayResp.status, message: railwayResp.statusText },
+      200
+    );
   } catch (e) {
     console.warn(`Error contacting Railway for rider ${riderId}: ${e.message || e}`);
   }
@@ -110,6 +121,9 @@ export default async (req: Request, context: Context) => {
       // no static data, fall through to error response
     }
   }
-  // Production / non-dev: no fallback
-  return jsonResponse({ success: false, error: "RAILWAY_AND_STATIC_UNAVAILABLE", message: "Unable to fetch live rider data" }, 502);
+  // Production / non-dev: no fallback, return JSON error with HTTP 200
+  return jsonResponse(
+    { success: false, error: 'RAILWAY_AND_STATIC_UNAVAILABLE', message: 'Unable to fetch live rider data' },
+    200
+  );
 };
