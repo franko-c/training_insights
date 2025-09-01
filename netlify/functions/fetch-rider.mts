@@ -13,6 +13,7 @@ function jsonResponse(obj: any, status = 200) {
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
+    "Permissions-Policy": "interest-cohort=()",
     },
   });
 }
@@ -27,6 +28,7 @@ export default async (req: Request, context: Context) => {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "Content-Type",
           "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Permissions-Policy": "interest-cohort=()",
         },
       });
     }
@@ -87,7 +89,7 @@ export default async (req: Request, context: Context) => {
         headers: { "Accept": "application/json" },
       });
 
-    if (railwayResp.ok) {
+      if (railwayResp.ok) {
         // Stream the JSON response back to the client without printing everything in logs.
         const data = await railwayResp.json();
 
@@ -101,8 +103,16 @@ export default async (req: Request, context: Context) => {
         return jsonResponse({ success: true, riderId: String(riderId), result: data });
       }
 
-      // If Railway returned non-OK, return JSON error but keep HTTP 200
+      // Log railway errors
       console.warn(`Railway returned ${railwayResp.status} ${railwayResp.statusText} for rider ${riderId}`);
+      // For server errors, provide generic fallback message to avoid Bad Gateway
+      if (railwayResp.status >= 500) {
+        return jsonResponse(
+          { success: false, error: 'RAILWAY_AND_STATIC_UNAVAILABLE', message: 'Unable to fetch live rider data' },
+          200
+        );
+      }
+      // For client errors, return specific error info
       return jsonResponse(
         { success: false, error: 'RAILWAY_ERROR', status: railwayResp.status, message: railwayResp.statusText },
         200
