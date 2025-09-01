@@ -8,8 +8,7 @@ import PersonalizedWorkouts from './PersonalizedWorkouts'
 import EventTypeSelector from './EventTypeSelector'
 import EventListView from './EventListView'
 import TooltipSimple from './TooltipSimple'
-import { dataService } from '../services/dataService'
-import { riderDataFetcher } from '../services/riderDataFetcher'
+// Removed legacy service imports; all data now flows via fetchRiderLive and props
 import { PowerCalculations } from '../utils/powerCalculations'
 import { PowerFormatting } from '../utils/powerFormatting'
 import { PerformanceIntelligence } from '../utils/performanceIntelligence'
@@ -29,7 +28,8 @@ const Dashboard = ({ riderData, onRiderChange }) => {
   // Load power data when rider changes
   useEffect(() => {
     if (riderData?.rider_id) {
-      loadPowerData(riderData.rider_id)
+      // Remove loadPowerData call
+      // loadPowerData(riderData.rider_id)
     }
   }, [riderData?.rider_id])
 
@@ -53,15 +53,7 @@ const Dashboard = ({ riderData, onRiderChange }) => {
     }
   }, [riderData, eventData])
 
-  const loadPowerData = async (riderId) => {
-    try {
-      const data = await dataService.loadRiderFile(riderId, 'power')
-      setPowerData(data)
-    } catch (error) {
-      console.error('Error loading power data:', error)
-      setPowerData(null)
-    }
-  }
+  // Remove loadPowerData function
 
   // Load event data when type or filter changes
   useEffect(() => {
@@ -74,7 +66,8 @@ const Dashboard = ({ riderData, onRiderChange }) => {
     }
     
     if (riderData?.rider_id) {
-      loadEventData(riderData.rider_id, selectedEventType)
+      // Use riderData.events directly
+      setEventData(riderData.events)
       loadEventCounts(riderData.rider_id)
     }
   }, [riderData?.rider_id, selectedEventType, dayFilter])
@@ -85,54 +78,17 @@ const Dashboard = ({ riderData, onRiderChange }) => {
     window.eventData = eventData
   }, [selectedEventType, eventData])
 
-  const loadEventData = async (riderId, eventType) => {
-    console.log('📡 Loading event data:', { riderId, eventType })
-    setLoading(true)
-    try {
-      const data = await dataService.loadEventData(riderId, eventType)
-      console.log('✅ Event data loaded:', data)
-      
-      // Apply day filter
-      if (data && data.events && dayFilter > 0) {
-        const cutoffDate = new Date()
-        cutoffDate.setDate(cutoffDate.getDate() - dayFilter)
-        
-        const filteredEvents = data.events.filter(event => {
-          const eventDate = new Date(event.event_date)
-          return eventDate >= cutoffDate
-        })
-        
-        const filteredData = {
-          ...data,
-          events: filteredEvents,
-          count: filteredEvents.length
-        }
-        
-        console.log(`📅 Applied ${dayFilter}-day filter: ${data.events.length} → ${filteredEvents.length} events`)
-        
-        // Auto-expand timeline for workouts if no events found
-        if (selectedEventType === 'workouts' && filteredEvents.length === 0 && data.events.length > 0) {
-          console.log('🔄 Auto-expanding timeline for workouts - switching to All Time')
-          setTimeout(() => setDayFilter(0), 100) // Small delay to prevent infinite loop
-          return
-        }
-        
-        setEventData(filteredData)
-      } else {
-        console.log(`📅 Using all data (dayFilter=${dayFilter}): ${data?.events?.length || 0} events`)
-        setEventData(data)
-      }
-    } catch (error) {
-      console.error('❌ Error loading event data:', error)
-      setEventData(null)
-    } finally {
-      setLoading(false)
-    }
-  }
+  // Remove loadEventData function
 
   const loadEventCounts = async (riderId) => {
     try {
-      const counts = await dataService.getEventCounts(riderId)
+      // counts now derived from riderData.summary
+      const counts = {
+        races: riderData.events?.races?.count || 0,
+        group_rides: riderData.events?.group_rides?.count || 0,
+        workouts: riderData.events?.workouts?.count || 0,
+        total: (riderData.events?.races?.count || 0) + (riderData.events?.group_rides?.count || 0) + (riderData.events?.workouts?.count || 0)
+      }
       setEventCounts(counts)
     } catch (error) {
       console.error('Error loading event counts:', error)
@@ -164,8 +120,8 @@ const Dashboard = ({ riderData, onRiderChange }) => {
       
       if (!confirmRefresh) return
 
-      // Clear all caches first
-      dataService.clearCache()
+      // Clear in-memory fetch cache if implemented
+      // dataService.clearCache() // no-op with fetchRiderLive
       
       // Try to refresh via the API
       await riderDataFetcher.refreshRiderData(riderData.rider_id)

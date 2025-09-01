@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { dataService } from '../services/dataService'
 import { EventUtils } from '../utils/eventUtils'
 import { PowerAnalysisUtils } from '../utils/powerAnalysisUtils'
 import { PowerFormatting } from '../utils/powerFormatting'
