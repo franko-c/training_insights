@@ -9,6 +9,11 @@
   # Functions directory
   functions = "netlify/functions"
 
+  [dev]
+    # Use Vite's dev server for live UI, and proxy functions
+    command = "npm run dev"
+    targetPort = 5173
+
 [build.environment]
   # Node.js version for functions (minimum 18 for Fetch API)
   NODE_VERSION = "18"
