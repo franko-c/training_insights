@@ -85,8 +85,9 @@ export default async (req: Request, context: Context) => {
 
     try {
       const railwayResp = await fetch(targetUrl, {
-        method: "GET",
-        headers: { "Accept": "application/json" },
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({}),
       });
 
       if (railwayResp.ok) {
