@@ -30,8 +30,18 @@ export default defineConfig({
         target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
-        // Strip the `/api` prefix so path `/api/fetch-rider` becomes `/fetch-rider`
-        rewrite: (path) => path.replace(/^\/api/, '')
+        // Forward both GET and POST, strip `/api` prefix
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            if (req.method === 'POST' && req.body) {
+              const bodyData = JSON.stringify(req.body)
+              proxyReq.setHeader('Content-Type', 'application/json')
+              proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+              proxyReq.write(bodyData)
+            }
+          })
+        }
       }
     }
   },
