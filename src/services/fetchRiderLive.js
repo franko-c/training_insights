@@ -1,11 +1,9 @@
 // Simple live fetch for rider data via Netlify Functions proxy
 export async function fetchRiderLive(riderId) {
-  // Call Netlify Function endpoint
-  const resp = await fetch('/api/fetch-rider', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ riderId, force_refresh: false }),
-  });
+  // Direct call to Railway backend for simplicity
+  const BASE = import.meta.env.VITE_RAILWAY_URL || 'https://zwiftervals-production.up.railway.app';
+  const url = `${BASE.replace(/\/+$/,'')}/fetch-rider/${encodeURIComponent(riderId)}?force_refresh=false`;
+  const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
   if (!resp.ok) {
     throw new Error(`Fetch live rider data failed: HTTP ${resp.status}`);
   }
