@@ -152,6 +152,9 @@ class SimpleZwiftClient:
 
 
 # --- Import ZwiftAPIClient and RiderDataManager as part of the package ---
+import os, sys
+# Add project root to sys.path so absolute package imports resolve correctly
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from zwift_api_client.client.zwift_client import ZwiftAPIClient
 from zwift_api_client.data.rider_data_manager import RiderDataManager
 
