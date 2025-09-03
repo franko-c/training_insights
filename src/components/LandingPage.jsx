@@ -13,19 +13,6 @@ const LandingPage = ({ onRiderSelected }) => {
   const [spinnerSteps, setSpinnerSteps] = useState([])
   const [spinnerPercent, setSpinnerPercent] = useState(null)
 
-  useEffect(() => {
-    if (riderId) {
-      (async () => {
-        try {
-          const data = await fetchRiderLive(riderId);
-          console.log('Fetched rider data:', data);
-          onRiderSelected(data)
-        } catch (err) {
-          console.error('Error fetching rider data:', err);
-        }
-      })();
-    }
-  }, [riderId, onRiderSelected])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
