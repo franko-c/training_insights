@@ -20,6 +20,13 @@ const PowerCurveChart = ({ selectedEventType, eventData, data, dayFilter }) => {
 
   // power data is now passed in via props.data.power or data.intervals
   const powerSeries = data.intervals || data.power?.intervals || []
+  console.log('🔍 Raw PowerCurveChart data:', powerSeries)
+
+  // Initialize internal powerData state and filteredPowerData from incoming series
+  useEffect(() => {
+    setPowerData(powerSeries)
+    setFilteredPowerData(powerSeries)
+  }, [powerSeries])
 
   useEffect(() => {
     console.log('🔄 PowerCurveChart data effect:', {
