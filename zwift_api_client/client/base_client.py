@@ -10,8 +10,8 @@ import time
 import logging
 import requests
 from typing import Dict, Any, Optional, Union
-from auth import ZwiftAuthManager
-from cache import get_cache_manager
+from ..auth import ZwiftAuthManager
+from ..cache import get_cache_manager
 
 
 class BaseAPIClient:
