@@ -1,0 +1,10 @@
+{
+  "ts": "2025-09-03T17:26:51.826Z",
+  "id": "1756920411826-4i507d2",
+  "source": "frontend",
+  "level": "info",
+  "message": "rider_selected_live",
+  "meta": {
+    "riderId": "383329"
+  }
+}
