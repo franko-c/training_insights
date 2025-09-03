@@ -4,6 +4,7 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './', // serve assets relative to index.html
   plugins: [react()],
   css: {
     postcss: './postcss.config.js',
