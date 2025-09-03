@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import LoadingSpinner from './LoadingSpinner'
 import { fetchRiderLive } from '../services/fetchRiderLive'
 import { remoteLog } from '../utils/logger'
@@ -12,6 +12,20 @@ const LandingPage = ({ onRiderSelected }) => {
   const [pendingRiderId, setPendingRiderId] = useState(null)
   const [spinnerSteps, setSpinnerSteps] = useState([])
   const [spinnerPercent, setSpinnerPercent] = useState(null)
+
+  useEffect(() => {
+    if (riderId) {
+      (async () => {
+        try {
+          const data = await fetchRiderLive(riderId);
+          console.log('Fetched rider data:', data);
+          onRiderSelected(data)
+        } catch (err) {
+          console.error('Error fetching rider data:', err);
+        }
+      })();
+    }
+  }, [riderId, onRiderSelected])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
