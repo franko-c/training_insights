@@ -67,7 +67,8 @@ const LandingPage = ({ onRiderSelected }) => {
           </div>
         ) : (
           <div className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Use div instead of form to prevent Enter key auto-submit */}
+      <div className="space-y-4">
               <div>
                 <label htmlFor="riderId" className="block text-sm font-medium text-gray-700 mb-2">ZwiftPower Rider ID</label>
                 <input
@@ -95,9 +96,11 @@ const LandingPage = ({ onRiderSelected }) => {
               )}
 
               <button
-                type="submit"
+                type="button"
                 disabled={loading || !riderId.trim()}
-                className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${loading || !riderId.trim() ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}>
+                className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${loading || !riderId.trim() ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                onClick={handleSubmit}
+              >
                 {loading ? 'Loading...' : 'Load Racing Insights'}
               </button>
 
@@ -110,7 +113,7 @@ const LandingPage = ({ onRiderSelected }) => {
                   </div>
                 </div>
               )}
-            </form>
+            </div>
 
             <div className="border-t border-gray-200 pt-6">
               <div className="text-center">
