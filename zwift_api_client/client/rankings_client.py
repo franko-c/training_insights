@@ -180,7 +180,7 @@ class RankingsClient(BaseAPIClient):
                           use_cache: bool = True) -> Dict[str, Any]:
         """
         Get specific rider's rankings
-        
+        `
         Args:
             rider_id: Zwift rider ID
             ranking_type: Type of ranking ('overall', 'category', 'power')

@@ -1,11 +1,11 @@
  -e .
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-python-multipart==0.0.6
-python-dotenv==1.0.0
-requests==2.31.0
-beautifulsoup4==4.12.2
-lxml==4.9.3
-pyyaml==6.0.2
-setuptools>=65.0
+ fastapi==0.104.1
+ uvicorn[standard]==0.24.0
+ python-multipart==0.0.6
+ python-dotenv==1.0.0
+ requests==2.31.0
+ beautifulsoup4==4.12.2
+ # lxml removed to allow default parser (html.parser) on macOS
+ pyyaml==6.0.2
+ setuptools>=65.0
 fastapi==0.104.1

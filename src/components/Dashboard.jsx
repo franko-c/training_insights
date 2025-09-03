@@ -30,6 +30,8 @@ const Dashboard = ({ riderData, onRiderChange }) => {
     if (riderData?.rider_id) {
       // Remove loadPowerData call
       // loadPowerData(riderData.rider_id)
+      // Initialize powerData state from riderData intervals
+      setPowerData(riderData.intervals || riderData.power?.intervals || [])
     }
   }, [riderData?.rider_id])
 
@@ -58,16 +60,14 @@ const Dashboard = ({ riderData, onRiderChange }) => {
   // Load event data when type or filter changes
   useEffect(() => {
     console.log('🎯 Dashboard useEffect - Event type changed to:', selectedEventType)
-    
-    // Auto-adjust dayFilter for workouts if they're old
-    if (selectedEventType === 'workouts' && dayFilter > 0) {
-      // Check if we need to auto-expand timeline for workouts
-      console.log('🔍 Checking if workouts need timeline expansion...')
-    }
-    
     if (riderData?.rider_id) {
-      // Use riderData.events directly
-      setEventData(riderData.events)
+      // Set eventData for the current event type (races, group_rides, workouts)
+  // Extract events, count, and latest date for the selected type
+  const raw = riderData.events?.[selectedEventType] || {}
+  const events = raw[selectedEventType === 'races' ? 'races' : selectedEventType === 'group_rides' ? 'group_rides' : 'workouts'] || []
+  const count = raw[selectedEventType === 'races' ? 'total_races' : selectedEventType === 'group_rides' ? 'total_group_rides' : 'total_workouts'] || 0
+  const latest_date = raw[selectedEventType === 'races' ? 'latest_race_date' : selectedEventType === 'group_rides' ? 'latest_ride_date' : 'latest_workout_date'] || null
+  setEventData({ events, count, latest_date })
       loadEventCounts(riderData.rider_id)
     }
   }, [riderData?.rider_id, selectedEventType, dayFilter])

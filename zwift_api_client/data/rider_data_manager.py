@@ -970,6 +970,27 @@ class RiderDataManager:
             
             all_events = data['data']
             self.logger.info(f"📊 Processing {len(all_events)} total events for separation...")
+            # Filter raw events to only those within the last 90 days to reduce payload
+            from datetime import datetime, timedelta
+            threshold_ts = int((datetime.now() - timedelta(days=90)).timestamp())
+            original_count = len(all_events)
+            # Use raw 'date' field (timestamp) to filter events from the last 90 days
+            # Only include events within the last 90 days to recognize inactivity
+            all_events = [e for e in all_events if int(e.get('date', 0)) >= threshold_ts]
+            self.logger.info(f"🚀 Filtered events to last 90 days: {len(all_events)}/{original_count}")
+            # If no recent events, return inactive flag and empty datasets
+            if not all_events:
+                from datetime import datetime
+                self.logger.info(f"⚠️ No recent events for rider {rider_id}, marking inactive")
+                return {
+                    'extraction_date': datetime.now().isoformat(),
+                    'total_events': 0,
+                    'races': {'count': 0, 'events': [], 'latest_date': None},
+                    'group_rides': {'count': 0, 'events': [], 'latest_date': None},
+                    'workouts': {'count': 0, 'events': [], 'latest_date': None},
+                    'source': 'profile_results_api_separated',
+                    'inactive': True
+                }
             
             # Separate events by type
             races = []

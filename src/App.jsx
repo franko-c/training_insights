@@ -32,9 +32,8 @@ function App() {
         setCurrentRiderId(id)
         // Normalize a minimal riderData object if the payload includes `profile` or `result`.
         // Prefer top-level profile, then result.profile, else pass the object as-is.
-  const normalized = riderOrResult.profile || riderOrResult.result?.profile || riderOrResult
-  // Legacy dataService hydration removed
-  setRiderData(normalized)
+  // Set full payload, including power, events, intervals
+  setRiderData(riderOrResult)
   try { remoteLog && remoteLog('info', 'rider_selected_live', { riderId: id }) } catch(e){}
         setLoading(false)
         return
@@ -54,11 +53,10 @@ function App() {
     try {
       // Fetch rider data live via backend API
       const result = await fetchRiderLive(riderId)
-      // Normalize payload and extract profile if present
-      const payload = result.result || result
-      const normalized = payload.profile || payload
+      // Use full fetched payload (includes power, events, intervals)
+      const fullData = result.result || result
       remoteLog?.('info', 'rider_selected_cached', { riderId })
-      setRiderData(normalized)
+      setRiderData(fullData)
     } catch (err) {
       console.error('Failed to load rider data:', err)
       remoteLog?.('error', 'rider_load_failed', { riderId, error: String(err) })

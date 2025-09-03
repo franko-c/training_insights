@@ -1,6 +1,1 @@
-auth
-cache
-client
-config
-data
-utils
+zwift_api_client
