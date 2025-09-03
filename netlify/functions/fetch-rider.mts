@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Context } from "@netlify/functions";
 import path from "path";
 import fs from "fs/promises";
@@ -33,21 +34,30 @@ export default async (req: Request, context: Context) => {
       });
     }
 
-    if (req.method !== "POST") {
+  // Support GET for query strings or POST for JSON body
+    let riderId: string | undefined;
+    let force_refresh: boolean = false;
+    if (req.method === 'GET') {
+      const url = new URL(req.url);
+      riderId = url.searchParams.get('riderId') || undefined;
+      force_refresh = url.searchParams.get('force_refresh') === 'true';
+    } else if (req.method === 'POST') {
+      try {
+        const body = await req.json();
+        riderId = body.riderId;
+        force_refresh = !!body.force_refresh;
+      } catch (e) {
+        return jsonResponse({ success: false, error: "INVALID_JSON", message: "Invalid JSON body" }, 400);
+      }
+    } else {
       return jsonResponse({ error: "Method not allowed" }, 405);
     }
 
-    let body: any;
-    try {
-      body = await req.json();
-    } catch (e) {
-      return jsonResponse({ success: false, error: "INVALID_JSON", message: "Invalid JSON body" }, 400);
-    }
 
-    const { riderId, force_refresh } = body || {};
-    if (!riderId || !/^\d{6,8}$/.test(String(riderId))) {
+    if (!riderId || !/^\d{6,8}$/.test(String(riderId).trim())) {
       return jsonResponse({ success: false, error: "INVALID_RIDER_ID", message: "riderId must be 6-8 digits" }, 400);
     }
+    riderId = riderId.trim();
 
     // DEV ONLY: if running under netlify dev and local cache exists, read from zwift_api_client data dir
     if (process.env.NETLIFY_DEV) {
@@ -84,10 +94,10 @@ export default async (req: Request, context: Context) => {
     console.log(`fetch-rider: proxying to ${targetUrl}`);
 
     try {
+      // Proxy to Railway backend using GET
       const railwayResp = await fetch(targetUrl, {
-        method: "POST",
-        headers: { "Accept": "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({}),
+        method: "GET",
+        headers: { "Accept": "application/json" },
       });
 
       if (railwayResp.ok) {
