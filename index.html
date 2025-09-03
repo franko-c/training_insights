@@ -25,7 +25,12 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚴‍♂️</text></svg>" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Fallback content if React fails to mount -->
+      <p style="color:red;text-align:center;margin-top:2rem;">JavaScript not loaded or React failed to mount.</p>
+    </div>
+    <script>console.log('index.html loaded successfully');</script>
+  <script>console.log('index.html loaded in browser');</script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+console.log('main.jsx loaded, about to mount React app');
 import App from './App.jsx'
 import './index.css'
 
