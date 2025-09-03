@@ -19,8 +19,10 @@
   # Optimize build performance
   NPM_CONFIG_FUND = "false"
   NPM_CONFIG_AUDIT = "false"
-  # Zwift API backend proxy target
+  # Zwift API backend proxy target (Railway)
   RAILWAY_BACKEND_URL = "https://zwiftervals-production.up.railway.app"
+  # Expose backend URL to Vite client for production
+  VITE_API_URL = "https://zwiftervals-production.up.railway.app"
 
 # API endpoints routing to functions (MUST come before SPA routing)
 [[redirects]]
@@ -50,7 +52,6 @@
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Headers = "Content-Type"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
-    Permissions-Policy = "interest-cohort=()"
 
 # Headers for data files
 [[headers]]
@@ -76,7 +77,3 @@
   [headers.values]
     Content-Type = "text/javascript; charset=utf-8"
 
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Permissions-Policy = ""
